@@ -8,11 +8,10 @@ export default defineConfig({
         laravel({
             input: [
               'resources/css/app.css',
-              'resources/js/app.tsx'
+              'resources/ts/app.tsx'
             ],
             refresh: true,
         }),
-        react(),
-        EnvironmentPlugin('all')
-    ],
+        react()
+        ],
 });
