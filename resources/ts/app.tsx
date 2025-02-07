@@ -1,7 +1,8 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 
-const appRoot = document.getElementById('app')!;
+const appRoot = document.getElementById("app")!;
 const root = createRoot(appRoot);
-root.render(<h1>Hello, vai tomar na peidasa aa xssss xxdcddfd ss dxd dsdds</h1>);
+root.render(
+    <h1>Hello, vai tomar na peidasa aa xssss xxdcddfd ss dxd dsdds</h1>
+);
