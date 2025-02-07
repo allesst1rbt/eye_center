@@ -14,7 +14,7 @@ services:
   database:
     image: mysql:8.0
     platform: linux/amd64 
-    command: mysqld --sql_mode=""
+    command: "--pid-file /var/lib/mysql/mysqld.pid"
     volumes:
       - ./laravel:/var/lib/mysql
     environment:

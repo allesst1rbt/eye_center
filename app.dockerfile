@@ -13,8 +13,7 @@ RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install pdo_mysql
 COPY ./package.json /var/www/html/package.json
 
-RUN npm install
-
+RUN npm i
 COPY ./docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
 RUN chmod +x /usr/local/bin/docker-php-entrypoint
 

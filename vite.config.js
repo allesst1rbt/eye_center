@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 
 
 export default defineConfig({
+    base: '/',
     plugins: [
         laravel({
             input: [
@@ -13,5 +14,14 @@ export default defineConfig({
             refresh: true,
         }),
         react()
-        ],
+      ],
+      server: {
+        host: '0.0.0.0',
+        hmr: {
+            host: 'localhost'
+        },
+        watch: {
+            usePolling: true
+        }
+      },
 });
