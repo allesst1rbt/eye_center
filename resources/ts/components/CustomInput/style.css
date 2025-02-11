@@ -1,0 +1,71 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.label {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.input {
+  flex: 1;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #000;
+  outline: none;
+  font-size: 16px;
+  padding: 2px 0;
+  background-color: transparent;
+  transition: border-color 0.3s;
+  padding-right: 40px;
+}
+
+.input:focus {
+  border-bottom: 1px solid #00c3b5;
+}
+
+.input-error,
+.input-error:focus {
+  border-bottom: 1px solid red !important;
+}
+
+.password-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.password-icon:hover {
+  color: #000;
+}
+
+.forgot-password {
+  font-size: 1rem;
+  color: #666;
+  text-align: right;
+  margin-top: 4px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.forgot-password:hover {
+  color: #000;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
