@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "baseUrl": "./",
+    "allowJs": true,
+    "checkJs": false,
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "paths": {
+      "@css/*": ["resources/css/*"],
+      "@/*": ["resources/ts/*"],
+      "@assets/*": ["resources/ts/assets/*"],
+      "@components/*": ["resources/ts/components/*"],
+      "@hooks/*": ["resources/ts/hooks/*"],
+      "@pages/*": ["resources/ts/pages/*"],
+      "@schemas/*": ["resources/ts/schemas/*"],
+      "@utils/*": ["resources/ts/utils/*"]
+    }
+  },
+  "include": ["resources/ts", "resources/css"],
+  "exclude": ["node_modules", "public"]
+}
