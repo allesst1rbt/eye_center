@@ -1,7 +1,13 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
-import AppRouter from "./routes";
+import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./contexts/auth/AuthProvider";
+import { router } from "./routes";
 
 const appRoot = document.getElementById("app")!;
 const root = createRoot(appRoot);
-root.render(<AppRouter />);
+
+root.render(
+  <AuthProvider>
+    <RouterProvider router={router} />
+  </AuthProvider>
+);

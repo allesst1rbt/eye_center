@@ -1,20 +1,9 @@
-import React from "react";
-import {
-    createBrowserRouter,
-    Navigate,
-    RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import SignIn from "./pages/auth/SignIn";
+import Home from "./pages/Home";
 
-const router = createBrowserRouter([
-    { path: "/", element: <SignIn /> },
-    // { path: "/", element: <Home /> },
-    // { path: "/about", element: <About /> },
-    { path: "*", element: <Navigate to="/" /> },
+export const router = createBrowserRouter([
+  { path: "/", element: <SignIn /> },
+  { path: "/dashboard", element: <Home /> },
+  { path: "*", element: <Navigate to="/login" /> },
 ]);
-
-const AppRouter: React.FC = () => {
-    return <RouterProvider router={router} />;
-};
-
-export default AppRouter;

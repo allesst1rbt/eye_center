@@ -1,3 +1,4 @@
+import { useAuth } from "@/contexts/auth/AuthContext";
 import Logo from "@assets/eye-center-logo.svg";
 import CustomInput from "@components/CustomInput";
 import "@css/SignIn.css";
@@ -5,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SignInSchema from "@schemas/SignInSchema";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 type FormData = z.infer<typeof SignInSchema>;
@@ -15,21 +17,30 @@ type SignInFormData = {
 };
 
 const SignIn = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   const {
     register,
     handleSubmit,
-    setError,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<SignInFormData>({
     resolver: zodResolver(SignInSchema),
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Dados enviados:", data);
+  const onSubmit = async (data: FormData) => {
+    try {
+      console.log("ENTREI AQUI");
+      await login(data);
+      navigate("/dashboard");
+    } catch (error) {
+      console.log("ERROR: ", error);
+    } finally {
+    }
   };
 
   const handleRequestAccess = () => {
@@ -67,24 +78,24 @@ const SignIn = () => {
             error={errors.password?.message}
             onChange={() => clearErrors("password")}
           />
-        </form>
 
-        <div className="submit-container">
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Entrando..." : "Entrar"}
-          </button>
+          <div className="submit-container">
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Entrando..." : "Entrar"}
+            </button>
 
-          <div className="request-access">
-            Novo aqui?{" "}
-            <span className="bold-text" onClick={handleRequestAccess}>
-              Solicite seu acesso
-            </span>
+            <div className="request-access">
+              Novo aqui?{" "}
+              <span className="bold-text" onClick={handleRequestAccess}>
+                Solicite seu acesso
+              </span>
+            </div>
           </div>
-        </div>
+        </form>
       </section>
     </div>
   );
