@@ -34,12 +34,10 @@ const SignIn = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.log("ENTREI AQUI");
       await login(data);
       navigate("/dashboard");
     } catch (error) {
       console.log("ERROR: ", error);
-    } finally {
     }
   };
 
