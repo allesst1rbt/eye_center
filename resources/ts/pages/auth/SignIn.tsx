@@ -4,7 +4,7 @@ import CustomInput from "@components/CustomInput";
 import "@css/SignIn.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignInSchema from "@schemas/SignInSchema";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -17,7 +17,7 @@ type SignInFormData = {
 };
 
 const SignIn = () => {
-  const { login } = useAuth();
+  const { login, token } = useAuth();
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,6 @@ const SignIn = () => {
   const onSubmit = async (data: FormData) => {
     try {
       await login(data);
-      navigate("/dashboard");
     } catch (error) {
       console.log("ERROR: ", error);
     }
@@ -44,6 +43,12 @@ const SignIn = () => {
   const handleRequestAccess = () => {
     console.log("Redirecionar para solicitação de acesso");
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/home", { replace: true });
+    }
+  }, [token]);
 
   return (
     <div className="root">

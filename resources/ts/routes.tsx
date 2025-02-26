@@ -1,26 +1,25 @@
-import { ReactElement } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import SignIn from "./pages/auth/SignIn";
-import Home from "./pages/Home";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { ProtectedRoute } from "./protectedRoute";
 
-const isAuthenticated = (): boolean => !!localStorage.getItem("token");
+const SignIn = lazy(() => import("@pages/auth/SignIn"));
+const Home = lazy(() => import("@pages/Home"));
 
-type ProtectedRouteProps = {
-  element: ReactElement;
-};
-
-const ProtectedRoute = ({ element }: ProtectedRouteProps): ReactElement => {
-  return isAuthenticated() ? element : <Navigate to="/" />;
-};
-
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: isAuthenticated() ? <Navigate to="/dashboard" /> : <SignIn />,
-  },
-  { path: "/dashboard", element: <ProtectedRoute element={<Home />} /> },
-  {
-    path: "*",
-    element: <Navigate to={isAuthenticated() ? "/dashboard" : "/"} />,
-  },
-]);
+export function ALlRoutes() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <BrowserRouter>
+        <Routes>
+          <Route path={"/"} element={<Outlet />}>
+            <Route index element={<SignIn />} />
+            <Route path={"login"} element={<SignIn />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path={"home"} element={<Home />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Suspense>
+  );
+}
