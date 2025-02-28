@@ -1,9 +1,25 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import SignIn from "./pages/auth/SignIn";
-import Home from "./pages/Home";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { ProtectedRoute } from "./protectedRoute";
 
-export const router = createBrowserRouter([
-  { path: "/", element: <SignIn /> },
-  { path: "/dashboard", element: <Home /> },
-  { path: "*", element: <Navigate to="/login" /> },
-]);
+const SignIn = lazy(() => import("@pages/auth/SignIn"));
+const Home = lazy(() => import("@pages/Home"));
+
+export function ALlRoutes() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <BrowserRouter>
+        <Routes>
+          <Route path={"/"} element={<Outlet />}>
+            <Route index element={<SignIn />} />
+            <Route path={"login"} element={<SignIn />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path={"home"} element={<Home />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Suspense>
+  );
+}
