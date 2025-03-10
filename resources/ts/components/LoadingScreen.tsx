@@ -1,3 +1,4 @@
+import "@css/LoadingScreen.css";
 import { TailSpin } from "react-loader-spinner";
 
 export function LoadingScreen() {

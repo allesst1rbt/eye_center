@@ -1,22 +1,18 @@
-import { ReactNode } from "react";
+import "@css/BaseLayout.css";
+import React from "react";
 import { CustomSidebar } from "./CustomSidebar";
 
 interface BaseLayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export default function BaseLayout({ children }: BaseLayoutProps) {
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      <CustomSidebar />
-      {children}
+    <div className="base-layout">
+      <div className="sidebar-container">
+        <CustomSidebar />
+      </div>
+      <div className="children-container">{children}</div>
     </div>
   );
 }

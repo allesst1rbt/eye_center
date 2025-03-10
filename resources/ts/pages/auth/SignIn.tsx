@@ -1,6 +1,6 @@
+import CustomInput from "@/components/CustomInput";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import Logo from "@assets/eye-center-logo.svg";
-import CustomInput from "@components/CustomInput";
 import "@css/SignIn.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignInSchema from "@schemas/SignInSchema";

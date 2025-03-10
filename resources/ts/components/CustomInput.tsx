@@ -1,6 +1,6 @@
+import "@css/CustomInput.css";
 import React from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import "./styles.css";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;

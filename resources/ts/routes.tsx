@@ -6,7 +6,12 @@ import { ProtectedRoute } from "./protectedRoute";
 const SignIn = lazy(() => import("@pages/auth/SignIn"));
 const Home = lazy(() => import("@pages/Home"));
 
-export function ALlRoutes() {
+export const routePaths = {
+  login: "/login",
+  home: "/home",
+};
+
+export function AllRoutes() {
   return (
     <Suspense fallback={<LoadingScreen />}>
       <BrowserRouter>
