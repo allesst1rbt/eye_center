@@ -16,7 +16,7 @@ export default function SidebarItem({
     <div className="item-container" onClick={onClick}>
       {children}
 
-      <h1 className="title">{itemName}</h1>
+      <h1 className="sidebar-title">{itemName}</h1>
     </div>
   );
 }

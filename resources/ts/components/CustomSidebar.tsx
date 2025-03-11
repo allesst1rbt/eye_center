@@ -4,6 +4,7 @@ import Logo from "@assets/eye-center-logo.svg";
 import "@css/CustomSidebar.css";
 import { IoMdHome } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import CustomButton from "./CustomButton";
 import SidebarItem from "./SidebarItem";
 
 export function CustomSidebar() {
@@ -23,9 +24,17 @@ export function CustomSidebar() {
         </SidebarItem>
       </div>
 
-      <button className="signout-button" onClick={logout}>
-        Sair
-      </button>
+      <CustomButton
+        onClick={logout}
+        label="Sair"
+        style={{
+          color: "#fff",
+          backgroundColor: "#00c3b5",
+          borderRadius: "5px",
+          fontSize: "1.2rem",
+          padding: "0.5vh 2vh",
+        }}
+      />
     </div>
   );
 }

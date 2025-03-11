@@ -1,3 +1,4 @@
+import CustomButton from "@/components/CustomButton";
 import "@css/Home.css";
 import { useState } from "react";
 
@@ -36,14 +37,27 @@ export default function Home() {
   ]);
 
   const subtitle = `${orders.length} ${
-    orders.length > 1 ? "pedido encontrado" : "pedidos encontrados"
+    orders.length == 1 ? "pedido encontrado" : "pedidos encontrados"
   }`;
 
   return (
     <div className="home-container">
-      <div className="title-container">
-        <h1>Pedidos</h1>
-        <h2>{subtitle}</h2>
+      <div className="home-title-container">
+        <div className="first-home-row">
+          <h1 className="home-title">Pedidos</h1>
+          <CustomButton
+            label="Adicionar pedido"
+            onClick={() => {}}
+            style={{
+              color: "#fff",
+              backgroundColor: "#00c3b5",
+              borderRadius: "5px",
+              fontSize: "1rem",
+              padding: "0.5vh 2vh",
+            }}
+          />
+        </div>
+        <h2 className="home-subtitle">{subtitle}</h2>
       </div>
     </div>
   );
