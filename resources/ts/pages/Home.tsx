@@ -49,6 +49,19 @@ export default function Home() {
   });
 
   const handleAddOrder = () => {
+    const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!phoneRegex.test(newOrder.customerNumber)) {
+      alert("O número de telefone deve estar no formato (xx) xxxxx-xxxx.");
+      return;
+    }
+
+    if (!emailRegex.test(newOrder.customerEmail)) {
+      alert("Por favor, insira um email válido.");
+      return;
+    }
+
     if (signatureRef.current && !signatureRef.current.isEmpty()) {
       setNewOrder((prevOrder) => ({
         ...prevOrder,
