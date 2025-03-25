@@ -91,7 +91,7 @@ export default function OrderModal({
         />
         <TextField
           fullWidth
-          label="Telefone do Cliente"
+          label="Telefone do Cliente (WhatsApp)"
           name="customerNumber"
           value={
             !isEdit

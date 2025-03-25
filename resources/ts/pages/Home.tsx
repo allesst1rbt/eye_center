@@ -173,7 +173,6 @@ export default function Home() {
       width: 180,
       valueGetter: (value, row: Order) => format(row.date!, "dd/MM/yyyy"),
     },
-    // { field: "lensDurability", headerName: "Prazo", width: 120 },
     {
       field: "actions",
       headerName: "Ações",
