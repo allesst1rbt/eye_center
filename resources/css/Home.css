@@ -18,8 +18,8 @@
 
 .home-title-container {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .first-home-row {
