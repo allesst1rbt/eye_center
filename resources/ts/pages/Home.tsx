@@ -1,15 +1,18 @@
 import CustomButton from "@/components/CustomButton";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
+import { Delete, Edit } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
+  IconButton,
   Modal,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { format } from "date-fns";
 import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 
@@ -20,6 +23,7 @@ interface Order {
   customerNumber: string;
   lensId: string;
   customerSignature: string;
+  date: Date | null;
 }
 
 export default function Home() {
@@ -38,17 +42,23 @@ export default function Home() {
     },
   ]);
 
-  const [isSigned, setIsSigned] = useState(false);
-
   const [newOrder, setNewOrder] = useState<Omit<Order, "id">>({
     customerName: "",
     customerEmail: "",
     customerNumber: "",
     lensId: "",
     customerSignature: "",
+    date: null,
   });
 
   const handleAddOrder = () => {
+    if (signatureRef.current && !signatureRef.current.isEmpty()) {
+      setNewOrder((prevOrder) => ({
+        ...prevOrder,
+        customerSignature: signatureRef.current!.toDataURL("image/png"),
+      }));
+    }
+
     if (
       !newOrder.customerName ||
       !newOrder.customerEmail ||
@@ -64,6 +74,7 @@ export default function Home() {
       id: orders.length ? orders[orders.length - 1].id + 1 : 1,
       ...newOrder,
       customerNumber: newOrder.customerNumber.replace(/\D/g, ""),
+      date: new Date(),
     };
 
     setOrders((prevOrders) => [...prevOrders, newOrderWithId]);
@@ -74,11 +85,11 @@ export default function Home() {
       customerNumber: "",
       lensId: "",
       customerSignature: "",
+      date: null,
     });
 
     if (signatureRef.current) {
       signatureRef.current.clear();
-      setIsSigned(false);
     }
   };
 
@@ -97,7 +108,6 @@ export default function Home() {
         ...prevOrder,
         customerSignature: "",
       }));
-      setIsSigned(false);
     }
   };
 
@@ -107,7 +117,6 @@ export default function Home() {
         ...prevOrder,
         customerSignature: signatureRef.current!.toDataURL("image/png"),
       }));
-      setIsSigned(true);
     }
   };
 
@@ -118,10 +127,10 @@ export default function Home() {
       customerNumber: "",
       lensId: "",
       customerSignature: "",
+      date: null,
     });
 
     signatureRef.current?.clear();
-    setIsSigned(false);
     setAddModalOpen(false);
   };
 
@@ -133,9 +142,50 @@ export default function Home() {
     }));
   };
 
-  const options = [
-    { label: "The Godfather", id: 1 },
-    { label: "Pulp Fiction", id: 2 },
+  const handleEdit = (id: number) => {
+    console.log("Editar pedido:", id);
+  };
+
+  const handleDelete = (id: number) => {
+    const confirmDelete = window.confirm(
+      "Tem certeza que deseja excluir este pedido?"
+    );
+    if (confirmDelete) {
+      setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
+      console.log("Pedido excluído:", id);
+    }
+  };
+
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "ID", width: 70 },
+    {
+      field: "customerName",
+      headerName: "Cliente",
+      width: 180,
+    },
+    {
+      field: "date",
+      headerName: "Data da compra",
+      width: 180,
+      valueGetter: (value, row: Order) => format(row.date!, "dd/MM/yyyy"),
+    },
+    // { field: "lensDurability", headerName: "Prazo", width: 120 },
+    {
+      field: "actions",
+      headerName: "Ações",
+      width: 120,
+      sortable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
+            <Edit />
+          </IconButton>
+          <IconButton color="error" onClick={() => handleDelete(params.row.id)}>
+            <Delete />
+          </IconButton>
+        </>
+      ),
+    },
   ];
 
   return (
@@ -159,7 +209,7 @@ export default function Home() {
         <Paper sx={{ height: "85%", width: "100%", marginTop: "5vh" }}>
           <DataGrid
             rows={orders}
-            columns={[]}
+            columns={columns}
             pageSizeOptions={[5, 10]}
             sx={{ border: 0 }}
           />
@@ -211,13 +261,27 @@ export default function Home() {
 
           <Autocomplete
             disablePortal
-            options={options}
+            options={lenses}
+            getOptionLabel={(option) => option.name}
+            onChange={(_, value) =>
+              setNewOrder((prevOrder) => ({
+                ...prevOrder,
+                lensId: value ? String(value.id) : "",
+              }))
+            }
             sx={{ marginTop: 1 }}
             renderInput={(params) => <TextField {...params} label="Lente" />}
           />
 
           <>
-            <div style={{ display: "flex", flexDirection: "row" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingRight: 10,
+              }}
+            >
               <Typography variant="subtitle1" sx={{ mt: 2, color: "GrayText" }}>
                 Assinatura do Cliente
               </Typography>
@@ -257,9 +321,6 @@ export default function Home() {
                 onEnd={handleSaveSignature}
               />
             </Box>
-            {!isSigned && (
-              <Box sx={{ color: "red", mt: 1 }}>Assinatura obrigatória!</Box>
-            )}
           </>
 
           <CustomButton
