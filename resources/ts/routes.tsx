@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { HashRouter, Outlet, Route, Routes } from "react-router-dom";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { ProtectedRoute } from "./protectedRoute";
 
@@ -14,7 +14,7 @@ export const routePaths = {
 export function AllRoutes() {
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path={"/"} element={<Outlet />}>
             <Route index element={<SignIn />} />
@@ -24,7 +24,7 @@ export function AllRoutes() {
             </Route>
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </Suspense>
   );
 }

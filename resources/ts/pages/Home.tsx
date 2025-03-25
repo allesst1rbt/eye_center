@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 
 interface Order {
@@ -30,6 +30,10 @@ export default function Home() {
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
+
+  const [editOrder, setEditOrder] = useState<Order | null>(null);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isModified, setIsModified] = useState<boolean>(false);
 
   const [lenses, setLenses] = useState<{ id: number; name: string }[]>([
     {
@@ -132,6 +136,7 @@ export default function Home() {
 
     signatureRef.current?.clear();
     setAddModalOpen(false);
+    setIsEdit(false);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +148,13 @@ export default function Home() {
   };
 
   const handleEdit = (id: number) => {
-    console.log("Editar pedido:", id);
+    const orderToEdit = orders.find((order) => order.id === id);
+    if (orderToEdit) {
+      setEditOrder(orderToEdit);
+      setNewOrder({ ...orderToEdit });
+      setIsEdit(true);
+      setAddModalOpen(true);
+    }
   };
 
   const handleDelete = (id: number) => {
@@ -187,6 +198,50 @@ export default function Home() {
       ),
     },
   ];
+
+  const handleSaveEdit = () => {
+    if (!editOrder) return;
+
+    if (
+      !newOrder.customerName ||
+      !newOrder.customerEmail ||
+      !newOrder.customerNumber ||
+      !newOrder.lensId ||
+      !newOrder.customerSignature
+    ) {
+      alert("Preencha todos os campos corretamente e assine o pedido!");
+      return;
+    }
+
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === editOrder.id ? { ...editOrder, ...newOrder } : order
+      )
+    );
+
+    setAddModalOpen(false);
+    setIsEdit(false);
+    setEditOrder(null);
+    setNewOrder({
+      customerName: "",
+      customerEmail: "",
+      customerNumber: "",
+      lensId: "",
+      customerSignature: "",
+      date: null,
+    });
+  };
+
+  useEffect(() => {
+    if (!editOrder) return;
+
+    setIsModified(
+      newOrder.customerName !== editOrder.customerName ||
+        newOrder.customerEmail !== editOrder.customerEmail ||
+        newOrder.customerNumber !== editOrder.customerNumber ||
+        newOrder.lensId !== editOrder.lensId
+    );
+  }, [newOrder, editOrder]);
 
   return (
     <>
@@ -254,7 +309,11 @@ export default function Home() {
             fullWidth
             label="Telefone do Cliente"
             name="customerNumber"
-            value={newOrder.customerNumber}
+            value={
+              !isEdit
+                ? newOrder.customerNumber
+                : formatPhoneNumber(newOrder.customerNumber)
+            }
             onChange={handlePhoneChange}
             margin="dense"
           />
@@ -262,6 +321,12 @@ export default function Home() {
           <Autocomplete
             disablePortal
             options={lenses}
+            defaultValue={
+              !isEdit
+                ? null
+                : lenses.find((lens) => String(lens.id) === newOrder.lensId) ||
+                  null
+            }
             getOptionLabel={(option) => option.name}
             onChange={(_, value) =>
               setNewOrder((prevOrder) => ({
@@ -286,13 +351,15 @@ export default function Home() {
                 Assinatura do Cliente
               </Typography>
 
-              <Typography
-                variant="subtitle1"
-                onClick={handleClearSignature}
-                sx={{ mt: 2, color: "red", cursor: "pointer" }}
-              >
-                Limpar
-              </Typography>
+              {!isEdit && (
+                <Typography
+                  variant="subtitle1"
+                  onClick={handleClearSignature}
+                  sx={{ mt: 2, color: "red", cursor: "pointer" }}
+                >
+                  Limpar
+                </Typography>
+              )}
             </div>
 
             <Box
@@ -309,28 +376,38 @@ export default function Home() {
                 flexDirection: "column",
               }}
             >
-              <SignatureCanvas
-                ref={signatureRef}
-                canvasProps={{
-                  width: 380,
-                  height: 150,
-                  className: "sigCanvas",
-                }}
-                penColor="black"
-                backgroundColor="transparent"
-                onEnd={handleSaveSignature}
-              />
+              {!isEdit ? (
+                <SignatureCanvas
+                  ref={signatureRef}
+                  canvasProps={{
+                    width: 380,
+                    height: 150,
+                    className: "sigCanvas",
+                  }}
+                  penColor="black"
+                  backgroundColor="transparent"
+                  onEnd={handleSaveSignature}
+                />
+              ) : (
+                <img
+                  src={newOrder.customerSignature}
+                  alt="Assinatura do Cliente"
+                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+                />
+              )}
             </Box>
           </>
 
           <CustomButton
-            label="Adicionar Pedido"
-            onClick={handleAddOrder}
+            label={isEdit ? "Salvar Alterações" : "Adicionar Pedido"}
+            onClick={isEdit ? handleSaveEdit : handleAddOrder}
+            disabled={isEdit && !isModified}
             style={{
-              marginTop: "10px",
+              marginTop: "25px",
               width: "100%",
+              fontSize: "1.1rem",
               borderRadius: "5px",
-              backgroundColor: "#00c3b5",
+              backgroundColor: isEdit && !isModified ? "gray" : "#00c3b5",
               color: "#fff",
               padding: "0.5vh 2vh",
             }}
