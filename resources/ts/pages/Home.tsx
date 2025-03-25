@@ -1,16 +1,9 @@
 import CustomButton from "@/components/CustomButton";
+import OrderActions from "@/components/OrderActions";
+import OrderModal from "@/components/OrderForm";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
-import { Delete, Edit } from "@mui/icons-material";
-import {
-  Autocomplete,
-  Box,
-  IconButton,
-  Modal,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Paper } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
@@ -187,14 +180,11 @@ export default function Home() {
       width: 120,
       sortable: false,
       renderCell: (params) => (
-        <>
-          <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
-            <Edit />
-          </IconButton>
-          <IconButton color="error" onClick={() => handleDelete(params.row.id)}>
-            <Delete />
-          </IconButton>
-        </>
+        <OrderActions
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          orderId={params.row.id}
+        />
       ),
     },
   ];
@@ -271,149 +261,23 @@ export default function Home() {
         </Paper>
       </div>
 
-      <Modal open={addModalOpen} onClose={onCloseModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            borderRadius: 2,
-            bgcolor: "background.paper",
-            boxShadow: "4px 4px 20px 0px rgba(0,0,0,0.35)",
-            p: 4,
-          }}
-        >
-          <Typography id="modal-modal-title" variant="h6">
-            Adicionar Pedido
-          </Typography>
-
-          <TextField
-            fullWidth
-            label="Nome do Cliente"
-            name="customerName"
-            value={newOrder.customerName}
-            onChange={handleChange}
-            margin="dense"
-          />
-          <TextField
-            fullWidth
-            label="Email do Cliente"
-            name="customerEmail"
-            value={newOrder.customerEmail}
-            onChange={handleChange}
-            margin="dense"
-          />
-          <TextField
-            fullWidth
-            label="Telefone do Cliente"
-            name="customerNumber"
-            value={
-              !isEdit
-                ? newOrder.customerNumber
-                : formatPhoneNumber(newOrder.customerNumber)
-            }
-            onChange={handlePhoneChange}
-            margin="dense"
-          />
-
-          <Autocomplete
-            disablePortal
-            options={lenses}
-            defaultValue={
-              !isEdit
-                ? null
-                : lenses.find((lens) => String(lens.id) === newOrder.lensId) ||
-                  null
-            }
-            getOptionLabel={(option) => option.name}
-            onChange={(_, value) =>
-              setNewOrder((prevOrder) => ({
-                ...prevOrder,
-                lensId: value ? String(value.id) : "",
-              }))
-            }
-            sx={{ marginTop: 1 }}
-            renderInput={(params) => <TextField {...params} label="Lente" />}
-          />
-
-          <>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                paddingRight: 10,
-              }}
-            >
-              <Typography variant="subtitle1" sx={{ mt: 2, color: "GrayText" }}>
-                Assinatura do Cliente
-              </Typography>
-
-              {!isEdit && (
-                <Typography
-                  variant="subtitle1"
-                  onClick={handleClearSignature}
-                  sx={{ mt: 2, color: "red", cursor: "pointer" }}
-                >
-                  Limpar
-                </Typography>
-              )}
-            </div>
-
-            <Box
-              sx={{
-                width: "100%",
-                height: 150,
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                backgroundColor: "#f5f5f5",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-                flexDirection: "column",
-              }}
-            >
-              {!isEdit ? (
-                <SignatureCanvas
-                  ref={signatureRef}
-                  canvasProps={{
-                    width: 380,
-                    height: 150,
-                    className: "sigCanvas",
-                  }}
-                  penColor="black"
-                  backgroundColor="transparent"
-                  onEnd={handleSaveSignature}
-                />
-              ) : (
-                <img
-                  src={newOrder.customerSignature}
-                  alt="Assinatura do Cliente"
-                  style={{ maxWidth: "100%", maxHeight: "100%" }}
-                />
-              )}
-            </Box>
-          </>
-
-          <CustomButton
-            label={isEdit ? "Salvar Alterações" : "Adicionar Pedido"}
-            onClick={isEdit ? handleSaveEdit : handleAddOrder}
-            disabled={isEdit && !isModified}
-            style={{
-              marginTop: "25px",
-              width: "100%",
-              fontSize: "1.1rem",
-              borderRadius: "5px",
-              backgroundColor: isEdit && !isModified ? "gray" : "#00c3b5",
-              color: "#fff",
-              padding: "0.5vh 2vh",
-            }}
-          />
-        </Box>
-      </Modal>
+      <OrderModal
+        open={addModalOpen}
+        onClose={onCloseModal}
+        newOrder={newOrder}
+        setNewOrder={setNewOrder}
+        isEdit={isEdit}
+        isModified={isModified}
+        lenses={lenses}
+        signatureRef={signatureRef}
+        handleChange={handleChange}
+        handlePhoneChange={handlePhoneChange}
+        handleSaveSignature={handleSaveSignature}
+        handleClearSignature={handleClearSignature}
+        handleSaveEdit={handleSaveEdit}
+        handleAddOrder={handleAddOrder}
+        formatPhoneNumber={formatPhoneNumber}
+      />
     </>
   );
 }

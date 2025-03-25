@@ -1,19 +1,8 @@
-interface CustomButtonProps {
-  onClick: () => void;
+interface CustomButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
-  style?: React.CSSProperties;
-  disabled?: boolean;
 }
 
-export default function CustomButton({
-  onClick,
-  label,
-  style,
-  disabled = false,
-}: CustomButtonProps) {
-  return (
-    <button style={style} onClick={onClick} disabled={disabled}>
-      {label}
-    </button>
-  );
+export default function CustomButton({ label, ...props }: CustomButtonProps) {
+  return <button {...props}>{label}</button>;
 }
