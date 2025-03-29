@@ -11,6 +11,7 @@ interface OrderModalProps {
   isEdit: boolean;
   isModified: boolean;
   lenses: { id: number; name: string }[];
+  dates: { id: number; label: string }[];
   signatureRef: React.RefObject<SignatureCanvas | null>;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhoneChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -29,6 +30,7 @@ export default function OrderModal({
   isEdit,
   isModified,
   lenses,
+  dates,
   signatureRef,
   handleChange,
   handlePhoneChange,
@@ -120,6 +122,26 @@ export default function OrderModal({
           }
           sx={styles.autocomplete}
           renderInput={(params) => <TextField {...params} label="Lente" />}
+        />
+
+        <Autocomplete
+          disablePortal
+          options={dates}
+          defaultValue={
+            !isEdit
+              ? null
+              : dates.find((date) => String(date.id) === newOrder.dateId) ||
+                null
+          }
+          getOptionLabel={(option) => option.label}
+          onChange={(_, value) =>
+            setNewOrder((prevOrder: Order) => ({
+              ...prevOrder,
+              dateId: value ? String(value.id) : "",
+            }))
+          }
+          sx={styles.autocomplete}
+          renderInput={(params) => <TextField {...params} label="Prazo" />}
         />
 
         <div

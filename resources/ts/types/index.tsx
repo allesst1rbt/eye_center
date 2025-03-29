@@ -3,14 +3,18 @@ export interface Order {
   customerName: string;
   customerEmail: string;
   customerNumber: string;
-  lensId: number;
+  lensId: string;
+  dateId: string;
   customerSignature: string;
+  date: Date | null;
 }
 
 export interface Lens {
   id: number;
   name: string;
-  fabricant: string;
-  family: string;
-  durability: number;
+}
+
+export interface Dates {
+  id: number;
+  label: string;
 }
