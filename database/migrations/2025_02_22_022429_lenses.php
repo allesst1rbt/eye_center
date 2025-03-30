@@ -12,12 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('lenses', function (Blueprint $table) {
-            $table->uuid(column: 'id')->unique();
+            $table->id();
             $table->string(column: 'name');
-            $table->string('expire_at')->nullable(false);
-            $table->uuid('producer_id');
-
-            $table->foreign('producer_id')->references('id')->on('producers');;
             $table->timestamps();
         });
 

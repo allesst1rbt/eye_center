@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\LensController;
-use App\Http\Controllers\ProducerController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\TermsController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,6 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::post('logout', action: [JWTAuthController::class, 'logout']);
     Route::post('lens/bulkCreate', action: [LensController::class, 'bulkCreate']);
     Route::resource('lens', LensController::class);
-    Route::resource('producer', ProducerController::class);
-
+    Route::resource('order', OrderController::class);
+    Route::resource('terms', TermsController::class);
 });

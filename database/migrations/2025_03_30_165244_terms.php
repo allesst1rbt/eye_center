@@ -6,18 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('producers', function (Blueprint $table) {
-            $table->uuid(column: 'id')->unique();
-            $table->string(column: 'name');
+        Schema::create('terms', function (Blueprint $table) {
+            $table->id();
+            $table->string(column: 'expire_date');
             $table->timestamps();
         });
-
     }
 
     /**
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('producers');
+        Schema::dropIfExists('terms');
     }
 };

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\lens;
+use App\Models\Lens;
+use App\Models\Terms;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -13,21 +14,33 @@ class LensController extends Controller
      */
     public function index()
     {
-        $lens = lens::all();
+        $lens = Lens::all();
         return response()->json($lens);
     }
 
 
-    // public function bulkCreate(Request $request)
-    // {
-       
-    //     $spreadsheet = IOFactory::load($request->excel->getPathName());
-    //     $worksheet = $spreadsheet->getActiveSheet();
-    //     $rows = $worksheet->toArray();
-    //     $header = array_shift( $rows );
-       
+    public function bulkCreate(Request $request)
+    {
+        Lens::query()->delete();
+        Terms::query()->delete();
 
-    // }
+        $spreadsheet = IOFactory::load($request->excel->getPathName());
+        $worksheet = $spreadsheet->getActiveSheet();
+        $lens = $worksheet->rangeToArray('A1:A300');
+        array_shift( array: $lens );
+        $lens = array_filter($lens, fn($value) => $value[0]!== null);
+        $terms = $worksheet->rangeToArray('B1:B20');
+        array_shift( array: $terms );
+        $terms = array_filter($terms, fn($value) => $value[0]!== null);
+
+        foreach($lens as $len) {
+            Lens::firstOrCreate(['name' => $len[0]]);  
+        };
+
+        foreach($terms as $term) {
+            Terms::firstOrCreate(['expire_date' => $term[0]]);  
+        };
+    }
 
     /**
      * Store a newly created resource in storage.
