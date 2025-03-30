@@ -1,6 +1,7 @@
 import CustomButton from "@/components/CustomButton";
 import OrderActions from "@/components/OrderActions";
 import OrderModal from "@/components/OrderForm";
+import { Dates, Lens, Order } from "@/types";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 import { Paper } from "@mui/material";
@@ -8,16 +9,6 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
-
-interface Order {
-  id: number;
-  customerName: string;
-  customerEmail: string;
-  customerNumber: string;
-  lensId: string;
-  customerSignature: string;
-  date: Date | null;
-}
 
 export default function Home() {
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
@@ -28,15 +19,25 @@ export default function Home() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isModified, setIsModified] = useState<boolean>(false);
 
-  const [lenses, setLenses] = useState<{ id: number; name: string }[]>([
+  const [lenses, setLenses] = useState<Lens[]>([
     {
       id: 1,
-      name: "Lente Blue Light - Zeiss - Digital - 365 dias",
+      name: "BIOINFINITY - ESFÉRICA",
     },
     {
       id: 2,
-      name: "Lente Transitions - Essilor - Fotossensível - 730 dias",
+      name: "BIOINFINITY - OASYS",
     },
+  ]);
+
+  const [dates, setDates] = useState<Dates[]>([
+    { id: 15, label: "15 dias" },
+    { id: 30, label: "1 mês (30 dias)" },
+    { id: 45, label: "1 mês e meio (45 dias)" },
+    { id: 60, label: "2 meses (60 dias)" },
+    { id: 90, label: "3 meses (90 dias)" },
+    { id: 180, label: "6 meses (180 dias)" },
+    { id: 365, label: "1 ano (365 dias)" },
   ]);
 
   const [newOrder, setNewOrder] = useState<Omit<Order, "id">>({
@@ -44,64 +45,10 @@ export default function Home() {
     customerEmail: "",
     customerNumber: "",
     lensId: "",
+    dateId: "",
     customerSignature: "",
     date: null,
   });
-
-  const handleAddOrder = () => {
-    const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    if (!phoneRegex.test(newOrder.customerNumber)) {
-      alert("O número de telefone deve estar no formato (xx) xxxxx-xxxx.");
-      return;
-    }
-
-    if (!emailRegex.test(newOrder.customerEmail)) {
-      alert("Por favor, insira um email válido.");
-      return;
-    }
-
-    if (signatureRef.current && !signatureRef.current.isEmpty()) {
-      setNewOrder((prevOrder) => ({
-        ...prevOrder,
-        customerSignature: signatureRef.current!.toDataURL("image/png"),
-      }));
-    }
-
-    if (
-      !newOrder.customerName ||
-      !newOrder.customerEmail ||
-      !newOrder.customerNumber ||
-      !newOrder.lensId ||
-      !newOrder.customerSignature
-    ) {
-      alert("Preencha todos os campos corretamente e assine o pedido!");
-      return;
-    }
-
-    const newOrderWithId: Order = {
-      id: orders.length ? orders[orders.length - 1].id + 1 : 1,
-      ...newOrder,
-      customerNumber: newOrder.customerNumber.replace(/\D/g, ""),
-      date: new Date(),
-    };
-
-    setOrders((prevOrders) => [...prevOrders, newOrderWithId]);
-    setAddModalOpen(false);
-    setNewOrder({
-      customerName: "",
-      customerEmail: "",
-      customerNumber: "",
-      lensId: "",
-      customerSignature: "",
-      date: null,
-    });
-
-    if (signatureRef.current) {
-      signatureRef.current.clear();
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -136,6 +83,7 @@ export default function Home() {
       customerEmail: "",
       customerNumber: "",
       lensId: "",
+      dateId: "",
       customerSignature: "",
       date: null,
     });
@@ -181,10 +129,25 @@ export default function Home() {
       width: 180,
     },
     {
+      field: "lensId",
+      headerName: "Lente",
+      width: 180,
+      valueGetter: (_, row: Order) =>
+        lenses.find((lens) => String(lens.id) === String(row.lensId))?.name,
+    },
+    {
       field: "date",
       headerName: "Data da compra",
-      width: 180,
-      valueGetter: (value, row: Order) => format(row.date!, "dd/MM/yyyy"),
+      width: 140,
+      valueGetter: (_, row: Order) => format(row.date!, "dd/MM/yyyy"),
+    },
+    {
+      field: "dateId",
+      headerName: "Prazo",
+      width: 130,
+      valueGetter: (_, row: Order) =>
+        dates.find((value) => String(value.id) === String(row.dateId))?.label ||
+        "N/A",
     },
     {
       field: "actions",
@@ -201,8 +164,25 @@ export default function Home() {
     },
   ];
 
-  const handleSaveEdit = () => {
-    if (!editOrder) return;
+  const handleAddOrder = () => {
+    if (
+      !newOrder.customerName ||
+      !newOrder.customerEmail ||
+      !newOrder.customerNumber ||
+      !newOrder.lensId ||
+      !newOrder.dateId ||
+      !newOrder.customerSignature
+    ) {
+      alert("Preencha todos os campos corretamente e assine o pedido!");
+      return;
+    }
+
+    if (signatureRef.current && !signatureRef.current.isEmpty()) {
+      setNewOrder((prevOrder) => ({
+        ...prevOrder,
+        customerSignature: signatureRef.current!.toDataURL("image/png"),
+      }));
+    }
 
     const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -217,34 +197,80 @@ export default function Home() {
       return;
     }
 
+    if (confirm("Deseja realmente adicionar essa compra?")) {
+      const newOrderWithId: Order = {
+        id: orders.length ? orders[orders.length - 1].id + 1 : 1,
+        ...newOrder,
+        customerNumber: newOrder.customerNumber.replace(/\D/g, ""),
+        date: new Date(),
+      };
+
+      setOrders((prevOrders) => [...prevOrders, newOrderWithId]);
+      setAddModalOpen(false);
+      setNewOrder({
+        customerName: "",
+        customerEmail: "",
+        customerNumber: "",
+        lensId: "",
+        dateId: "",
+        customerSignature: "",
+        date: null,
+      });
+
+      if (signatureRef.current) {
+        signatureRef.current.clear();
+      }
+    }
+  };
+
+  const handleSaveEdit = () => {
+    if (!editOrder) return;
+
     if (
       !newOrder.customerName ||
       !newOrder.customerEmail ||
       !newOrder.customerNumber ||
       !newOrder.lensId ||
+      !newOrder.dateId ||
       !newOrder.customerSignature
     ) {
       alert("Preencha todos os campos corretamente e assine o pedido!");
       return;
     }
 
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === editOrder.id ? { ...editOrder, ...newOrder } : order
-      )
-    );
+    const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    setAddModalOpen(false);
-    setIsEdit(false);
-    setEditOrder(null);
-    setNewOrder({
-      customerName: "",
-      customerEmail: "",
-      customerNumber: "",
-      lensId: "",
-      customerSignature: "",
-      date: null,
-    });
+    if (!phoneRegex.test(newOrder.customerNumber)) {
+      alert("O número de telefone deve estar no formato (xx) xxxxx-xxxx.");
+      return;
+    }
+
+    if (!emailRegex.test(newOrder.customerEmail)) {
+      alert("Por favor, insira um email válido.");
+      return;
+    }
+
+    if (confirm("Deseja confirmar a edição da compra?")) {
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === editOrder.id ? { ...editOrder, ...newOrder } : order
+        )
+      );
+
+      setAddModalOpen(false);
+      setIsEdit(false);
+      setEditOrder(null);
+      setNewOrder({
+        customerName: "",
+        customerEmail: "",
+        customerNumber: "",
+        lensId: "",
+        dateId: "",
+        customerSignature: "",
+        date: null,
+      });
+    }
   };
 
   useEffect(() => {
@@ -294,6 +320,7 @@ export default function Home() {
         isEdit={isEdit}
         isModified={isModified}
         lenses={lenses}
+        dates={dates}
         signatureRef={signatureRef}
         handleChange={handleChange}
         handlePhoneChange={handlePhoneChange}
