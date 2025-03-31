@@ -85,7 +85,7 @@ export default function OrderModal({
         />
         <TextField
           fullWidth
-          label="Email do Cliente"
+          label="Email do Cliente (Opcional)"
           name="customerEmail"
           value={newOrder.customerEmail}
           onChange={handleChange}

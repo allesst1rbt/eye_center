@@ -1,7 +1,7 @@
 export interface Order {
   id: number;
   customerName: string;
-  customerEmail: string;
+  customerEmail?: string;
   customerNumber: string;
   lensId: string;
   dateId: string;

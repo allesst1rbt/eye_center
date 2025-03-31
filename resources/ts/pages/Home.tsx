@@ -167,7 +167,6 @@ export default function Home() {
   const handleAddOrder = () => {
     if (
       !newOrder.customerName ||
-      !newOrder.customerEmail ||
       !newOrder.customerNumber ||
       !newOrder.lensId ||
       !newOrder.dateId ||
@@ -192,7 +191,7 @@ export default function Home() {
       return;
     }
 
-    if (!emailRegex.test(newOrder.customerEmail)) {
+    if (newOrder.customerEmail && !emailRegex.test(newOrder.customerEmail)) {
       alert("Por favor, insira um email válido.");
       return;
     }
@@ -228,7 +227,6 @@ export default function Home() {
 
     if (
       !newOrder.customerName ||
-      !newOrder.customerEmail ||
       !newOrder.customerNumber ||
       !newOrder.lensId ||
       !newOrder.dateId ||
@@ -246,7 +244,7 @@ export default function Home() {
       return;
     }
 
-    if (!emailRegex.test(newOrder.customerEmail)) {
+    if (newOrder.customerEmail && !emailRegex.test(newOrder.customerEmail)) {
       alert("Por favor, insira um email válido.");
       return;
     }
