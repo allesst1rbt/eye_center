@@ -1,4 +1,4 @@
-import { Order } from "@/types";
+import { Dates, Lens, Order } from "@/types";
 import { Autocomplete, Box, Modal, TextField, Typography } from "@mui/material";
 import SignatureCanvas from "react-signature-canvas";
 import CustomButton from "./CustomButton";
@@ -10,8 +10,8 @@ interface OrderModalProps {
   setNewOrder: React.Dispatch<React.SetStateAction<any>>;
   isEdit: boolean;
   isModified: boolean;
-  lenses: { id: number; name: string }[];
-  dates: { id: number; label: string }[];
+  lenses: Lens[];
+  dates: Dates[];
   signatureRef: React.RefObject<SignatureCanvas | null>;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhoneChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -133,7 +133,7 @@ export default function OrderModal({
               : dates.find((date) => String(date.id) === newOrder.dateId) ||
                 null
           }
-          getOptionLabel={(option) => option.label}
+          getOptionLabel={(option) => option.expire_date}
           onChange={(_, value) =>
             setNewOrder((prevOrder: Order) => ({
               ...prevOrder,

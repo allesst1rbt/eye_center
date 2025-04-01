@@ -1,7 +1,8 @@
 import CustomButton from "@/components/CustomButton";
 import OrderActions from "@/components/OrderActions";
 import OrderModal from "@/components/OrderForm";
-import { Dates, Lens, Order } from "@/types";
+import { useLens } from "@/contexts/lens/LensContext";
+import { Order } from "@/types";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 import { Paper } from "@mui/material";
@@ -19,26 +20,7 @@ export default function Home() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isModified, setIsModified] = useState<boolean>(false);
 
-  const [lenses, setLenses] = useState<Lens[]>([
-    {
-      id: 1,
-      name: "BIOINFINITY - ESFÉRICA",
-    },
-    {
-      id: 2,
-      name: "BIOINFINITY - OASYS",
-    },
-  ]);
-
-  const [dates, setDates] = useState<Dates[]>([
-    { id: 15, label: "15 dias" },
-    { id: 30, label: "1 mês (30 dias)" },
-    { id: 45, label: "1 mês e meio (45 dias)" },
-    { id: 60, label: "2 meses (60 dias)" },
-    { id: 90, label: "3 meses (90 dias)" },
-    { id: 180, label: "6 meses (180 dias)" },
-    { id: 365, label: "1 ano (365 dias)" },
-  ]);
+  const { lens, dates } = useLens();
 
   const [newOrder, setNewOrder] = useState<Omit<Order, "id">>({
     customerName: "",
@@ -133,7 +115,7 @@ export default function Home() {
       headerName: "Lente",
       width: 180,
       valueGetter: (_, row: Order) =>
-        lenses.find((lens) => String(lens.id) === String(row.lensId))?.name,
+        lens.find((lens) => String(lens.id) === String(row.lensId))?.name,
     },
     {
       field: "date",
@@ -146,8 +128,8 @@ export default function Home() {
       headerName: "Prazo",
       width: 130,
       valueGetter: (_, row: Order) =>
-        dates.find((value) => String(value.id) === String(row.dateId))?.label ||
-        "N/A",
+        dates.find((value) => String(value.id) === String(row.dateId))
+          ?.expire_date || "N/A",
     },
     {
       field: "actions",
@@ -317,7 +299,7 @@ export default function Home() {
         setNewOrder={setNewOrder}
         isEdit={isEdit}
         isModified={isModified}
-        lenses={lenses}
+        lenses={lens}
         dates={dates}
         signatureRef={signatureRef}
         handleChange={handleChange}

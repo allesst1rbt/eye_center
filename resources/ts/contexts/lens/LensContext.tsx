@@ -1,9 +1,10 @@
-import { Lens } from "@/types";
+import { Dates, Lens } from "@/types";
 import FormData from "form-data";
 import { createContext, useContext } from "react";
 
 export interface LensContextType {
   lens: Lens[];
+  dates: Dates[];
   getLens: () => void;
   updateLens: (formData: FormData) => Promise<void>;
   loadingGetLens: boolean;

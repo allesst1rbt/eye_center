@@ -1,5 +1,9 @@
-import { getLensService, updateLensService } from "@/services/lensService";
-import { Lens } from "@/types";
+import {
+  getExpireDates,
+  getLensService,
+  updateLensService,
+} from "@/services/lensService";
+import { Dates, Lens } from "@/types";
 import FormData from "form-data";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { LensContext } from "./LensContext";
@@ -8,6 +12,7 @@ export const LensProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [lens, setLens] = useState<Lens[]>([]);
+  const [dates, setDates] = useState<Dates[]>([]);
   const [loadingGetLens, setLoadingGetLens] = useState<boolean>(false);
   const [loadingUpdateLens, setLoadingUpdateLens] = useState<boolean>(false);
 
@@ -15,8 +20,10 @@ export const LensProvider: React.FC<{ children: ReactNode }> = ({
     try {
       setLoadingGetLens(true);
       const response = await getLensService();
+      const terms = await getExpireDates();
 
       setLens(response);
+      setDates(terms);
     } catch (error) {
       console.error("Erro ao buscar lentes:", error);
     } finally {
@@ -45,7 +52,14 @@ export const LensProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <LensContext.Provider
-      value={{ lens, getLens, updateLens, loadingGetLens, loadingUpdateLens }}
+      value={{
+        lens,
+        dates,
+        getLens,
+        updateLens,
+        loadingGetLens,
+        loadingUpdateLens,
+      }}
     >
       {children}
     </LensContext.Provider>

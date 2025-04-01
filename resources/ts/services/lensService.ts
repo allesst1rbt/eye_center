@@ -1,9 +1,15 @@
-import { Lens } from "@/types";
+import { Dates, Lens } from "@/types";
 import api from "@/utils/api";
 import FormData from "form-data";
 
 export const getLensService = async (): Promise<Lens[]> => {
   const response = await api.get("/lens");
+
+  return response.data;
+};
+
+export const getExpireDates = async (): Promise<Dates[]> => {
+  const response = await api.get("/terms");
 
   return response.data;
 };

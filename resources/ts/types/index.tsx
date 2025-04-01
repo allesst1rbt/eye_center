@@ -16,5 +16,5 @@ export interface Lens {
 
 export interface Dates {
   id: number;
-  label: string;
+  expire_date: string;
 }
