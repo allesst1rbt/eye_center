@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Terms extends Model
 {
-    use HasUlids;
 
     protected $fillable = [
         'expire_date',

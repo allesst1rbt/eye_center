@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lens extends Model
 {
-    use HasUlids;
 
     protected $fillable = [
         'name',
