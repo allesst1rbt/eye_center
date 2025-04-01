@@ -1,5 +1,6 @@
 import { getLensService, updateLensService } from "@/services/lensService";
 import { Lens } from "@/types";
+import FormData from "form-data";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { LensContext } from "./LensContext";
 

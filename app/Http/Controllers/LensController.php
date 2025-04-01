@@ -34,11 +34,11 @@ class LensController extends Controller
         $terms = array_filter($terms, fn($value) => $value[0]!== null);
 
         foreach($lens as $len) {
-            Lens::firstOrCreate(['name' => $len[0]]);  
+            Lens::firstOrCreate(['name' => $len[0]]);
         };
 
         foreach($terms as $term) {
-            Terms::firstOrCreate(['expire_date' => $term[0]]);  
+            Terms::firstOrCreate(['expire_date' => $term[0]]);
         };
     }
 

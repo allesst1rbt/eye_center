@@ -3,6 +3,7 @@ import { useLens } from "@/contexts/lens/LensContext";
 import { routePaths } from "@/routes";
 import Logo from "@assets/eye-center-logo.svg";
 import "@css/CustomSidebar.css";
+import FormData from "form-data";
 import { useCallback, useRef } from "react";
 import { GiSpectacleLenses } from "react-icons/gi";
 import { IoMdHome } from "react-icons/io";
@@ -22,18 +23,13 @@ export function CustomSidebar() {
         const selectedFile = event.target.files[0];
 
         try {
-          const buffer = await selectedFile.arrayBuffer(); // Obtém o ArrayBuffer
-          const blob = new Blob([buffer], { type: selectedFile.type }); // Converte para Blob
+          const buffer = await selectedFile.arrayBuffer();
+          const blob = new Blob([buffer], { type: selectedFile.type });
 
           const formData = new FormData();
-          formData.append("excel", blob, selectedFile.name); // Adiciona ao FormData
+          formData.append("excel", blob, selectedFile.name);
 
-          // Exibir conteúdo do FormData corretamente
-          for (const [key, value] of formData.entries()) {
-            console.log(`FormData -> ${key}:`, value);
-          }
-
-          updateLens(formData); // Envia para a API
+          updateLens(formData);
         } catch (error) {
           console.error("Erro ao processar o arquivo:", error);
         }

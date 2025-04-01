@@ -1,4 +1,5 @@
 import { Lens } from "@/types";
+import FormData from "form-data";
 import { createContext, useContext } from "react";
 
 export interface LensContextType {
