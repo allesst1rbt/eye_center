@@ -23,7 +23,7 @@
 .items-container {
   display: flex;
   flex-direction: column;
-  gap: 1vh;
+  gap: 3vh;
 }
 
 .signout-button {

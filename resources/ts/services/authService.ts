@@ -14,5 +14,6 @@ export const authLogin = async (data: {
   password: string;
 }): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>("/login", data);
+
   return response.data;
 };
