@@ -36,8 +36,6 @@ export const LensProvider: React.FC<{ children: ReactNode }> = ({
       setLoadingUpdateLens(true);
 
       await updateLensService(formData);
-
-      getLens();
     } catch (error) {
       console.error("Erro ao enviar arquivo:", error);
       alert("Erro ao enviar o arquivo.");

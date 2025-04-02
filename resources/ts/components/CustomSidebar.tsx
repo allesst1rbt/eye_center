@@ -5,6 +5,7 @@ import Logo from "@assets/eye-center-logo.svg";
 import "@css/CustomSidebar.css";
 import FormData from "form-data";
 import { useCallback, useRef } from "react";
+import toast from "react-hot-toast";
 import { GiSpectacleLenses } from "react-icons/gi";
 import { IoMdHome } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +18,7 @@ export function CustomSidebar() {
   const { updateLens } = useLens();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleUpdateLens = useCallback(
+  const onSubmit = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files[0]) {
         const selectedFile = event.target.files[0];
@@ -29,9 +30,19 @@ export function CustomSidebar() {
           const formData = new FormData();
           formData.append("excel", blob, selectedFile.name);
 
-          updateLens(formData);
+          toast.promise(
+            updateLens(formData),
+            {
+              loading: "Atualizando...",
+              success: <b>Lentes atualizadas com sucesso! :D</b>,
+              error: <b>Erro ao atualizar lentes. :(</b>,
+            },
+            { duration: 1500 }
+          );
         } catch (error) {
-          console.error("Erro ao processar o arquivo:", error);
+          console.error("Erro ao atualizar lentes: ", error);
+        } finally {
+          setTimeout(() => navigate(0), 1500);
         }
       }
     },
@@ -62,7 +73,7 @@ export function CustomSidebar() {
           accept=".xlsx"
           ref={fileInputRef}
           style={{ display: "none" }}
-          onChange={handleUpdateLens}
+          onChange={onSubmit}
         />
       </div>
 

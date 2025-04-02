@@ -4,8 +4,9 @@ import Logo from "@assets/eye-center-logo.svg";
 import "@css/SignIn.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignInSchema from "@schemas/SignInSchema";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
@@ -32,23 +33,25 @@ const SignIn = () => {
     resolver: zodResolver(SignInSchema),
   });
 
+  const handleLogin = useCallback(async (data: FormData) => {
+    await login(data);
+    navigate("/home", { replace: true });
+  }, []);
+
   const onSubmit = async (data: FormData) => {
-    try {
-      await login(data);
-    } catch (error) {
-      console.log("ERROR: ", error);
-    }
+    toast.promise(
+      handleLogin(data),
+      {
+        loading: "Fazendo login...",
+        error: <b>Usuário e/ou senha incorretos :(</b>,
+      },
+      { duration: 1500 }
+    );
   };
 
   const handleRequestAccess = () => {
     console.log("Redirecionar para solicitação de acesso");
   };
-
-  useEffect(() => {
-    if (token) {
-      navigate("/home", { replace: true });
-    }
-  }, [token]);
 
   return (
     <div className="root">
