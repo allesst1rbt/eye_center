@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('customer_name');
-            $table->string('customer_email');
+            $table->string('customer_email')->nullable(true);
             $table->string('customer_number');
             $table->foreignId(column: 'lens_id');
-            $table->string('customer_signature');
+            $table->binary('customer_signature');
             $table->foreignId(column: 'terms_id');
 
             $table->timestamps();
