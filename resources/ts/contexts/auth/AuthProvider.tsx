@@ -1,5 +1,5 @@
 import { authLogin, LoginResponse } from "@/services/authService";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 
 interface AuthProviderProps {
@@ -16,13 +16,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.getItem("token")
   );
 
-  useEffect(() => {
+  const checkToken = useCallback(() => {
     if (token) {
-      localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
+      return localStorage.setItem("token", token);
     }
+
+    localStorage.removeItem("token");
   }, [token]);
+
+  useEffect(() => {
+    checkToken();
+  }, [checkToken]);
 
   const login = async (data: { email: string; password: string }) => {
     try {

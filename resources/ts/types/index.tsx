@@ -1,12 +1,11 @@
 export interface Order {
   id: number;
-  customerName: string;
-  customerEmail?: string;
-  customerNumber: string;
-  lensId: string;
-  dateId: string;
-  customerSignature: string;
-  date: Date | null;
+  customer_name: string;
+  customer_email?: string;
+  customer_number: string;
+  lens_id: number | null;
+  customer_signature: string;
+  term_id: number | null;
 }
 
 export interface Lens {
@@ -14,7 +13,7 @@ export interface Lens {
   name: string;
 }
 
-export interface Dates {
+export interface Terms {
   id: number;
   expire_date: string;
 }

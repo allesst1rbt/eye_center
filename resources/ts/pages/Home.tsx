@@ -2,34 +2,36 @@ import CustomButton from "@/components/CustomButton";
 import OrderActions from "@/components/OrderActions";
 import OrderModal from "@/components/OrderForm";
 import { useLens } from "@/contexts/lens/LensContext";
+import { useOrderContext } from "@/contexts/orders/OrderContext";
 import { Order } from "@/types";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 import { Paper } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import SignatureCanvas from "react-signature-canvas";
 
 export default function Home() {
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
-  const [orders, setOrders] = useState<Order[]>([]);
+
   const signatureRef = useRef<SignatureCanvas | null>(null);
 
   const [editOrder, setEditOrder] = useState<Order | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isModified, setIsModified] = useState<boolean>(false);
 
-  const { lens, dates } = useLens();
+  const { lens, terms } = useLens();
+  const { orders, getOrders, createOrder, updateOrder, deleteOrder } =
+    useOrderContext();
 
   const [newOrder, setNewOrder] = useState<Omit<Order, "id">>({
-    customerName: "",
-    customerEmail: "",
-    customerNumber: "",
-    lensId: "",
-    dateId: "",
-    customerSignature: "",
-    date: null,
+    customer_name: "",
+    customer_email: "",
+    customer_number: "",
+    lens_id: null,
+    customer_signature: "",
+    term_id: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +47,7 @@ export default function Home() {
       signatureRef.current.clear();
       setNewOrder((prevOrder) => ({
         ...prevOrder,
-        customerSignature: "",
+        customer_signature: "",
       }));
     }
   };
@@ -54,20 +56,19 @@ export default function Home() {
     if (signatureRef.current && !signatureRef.current.isEmpty()) {
       setNewOrder((prevOrder) => ({
         ...prevOrder,
-        customerSignature: signatureRef.current!.toDataURL("image/png"),
+        customer_signature: signatureRef.current!.toDataURL("image/png"),
       }));
     }
   };
 
   const onCloseModal = () => {
     setNewOrder({
-      customerName: "",
-      customerEmail: "",
-      customerNumber: "",
-      lensId: "",
-      dateId: "",
-      customerSignature: "",
-      date: null,
+      customer_name: "",
+      customer_email: "",
+      customer_number: "",
+      lens_id: null,
+      customer_signature: "",
+      term_id: null,
     });
 
     signatureRef.current?.clear();
@@ -79,7 +80,7 @@ export default function Home() {
     const { value } = e.target;
     setNewOrder((prevOrder) => ({
       ...prevOrder,
-      customerNumber: formatPhoneNumber(value),
+      customer_number: formatPhoneNumber(value),
     }));
   };
 
@@ -93,43 +94,27 @@ export default function Home() {
     }
   };
 
-  const handleDelete = (id: number) => {
-    const confirmDelete = window.confirm(
-      "Tem certeza que deseja excluir este pedido?"
-    );
-    if (confirmDelete) {
-      setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
-      console.log("Pedido excluído:", id);
-    }
-  };
-
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
     {
-      field: "customerName",
+      field: "customer_name",
       headerName: "Cliente",
       width: 180,
     },
     {
-      field: "lensId",
+      field: "lens_id",
       headerName: "Lente",
       width: 180,
       valueGetter: (_, row: Order) =>
-        lens.find((lens) => String(lens.id) === String(row.lensId))?.name,
+        lens.find((l) => String(l.id) === String(row.lens_id))?.name,
     },
     {
-      field: "date",
-      headerName: "Data da compra",
-      width: 140,
-      valueGetter: (_, row: Order) => format(row.date!, "dd/MM/yyyy"),
-    },
-    {
-      field: "dateId",
+      field: "term_id",
       headerName: "Prazo",
       width: 130,
       valueGetter: (_, row: Order) =>
-        dates.find((value) => String(value.id) === String(row.dateId))
-          ?.expire_date || "N/A",
+        terms.find((d) => String(d.id) === String(row.term_id))?.expire_date ||
+        "N/A",
     },
     {
       field: "actions",
@@ -146,13 +131,13 @@ export default function Home() {
     },
   ];
 
-  const handleAddOrder = () => {
+  const handleAddOrder = async () => {
     if (
-      !newOrder.customerName ||
-      !newOrder.customerNumber ||
-      !newOrder.lensId ||
-      !newOrder.dateId ||
-      !newOrder.customerSignature
+      !newOrder.customer_name ||
+      !newOrder.customer_number ||
+      !newOrder.lens_id ||
+      !newOrder.term_id ||
+      !newOrder.customer_signature
     ) {
       alert("Preencha todos os campos corretamente e assine o pedido!");
       return;
@@ -161,41 +146,45 @@ export default function Home() {
     if (signatureRef.current && !signatureRef.current.isEmpty()) {
       setNewOrder((prevOrder) => ({
         ...prevOrder,
-        customerSignature: signatureRef.current!.toDataURL("image/png"),
+        customer_signature: signatureRef.current!.toDataURL("image/png"),
       }));
     }
 
     const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (!phoneRegex.test(newOrder.customerNumber)) {
+    if (!phoneRegex.test(newOrder.customer_number)) {
       alert("O número de telefone deve estar no formato (xx) xxxxx-xxxx.");
       return;
     }
 
-    if (newOrder.customerEmail && !emailRegex.test(newOrder.customerEmail)) {
+    if (newOrder.customer_email && !emailRegex.test(newOrder.customer_email)) {
       alert("Por favor, insira um email válido.");
       return;
     }
 
     if (confirm("Deseja realmente adicionar essa compra?")) {
-      const newOrderWithId: Order = {
-        id: orders.length ? orders[orders.length - 1].id + 1 : 1,
-        ...newOrder,
-        customerNumber: newOrder.customerNumber.replace(/\D/g, ""),
-        date: new Date(),
-      };
+      toast.promise(
+        createOrder({
+          ...newOrder,
+          customer_number: newOrder.customer_number.replace(/\D/g, ""),
+        }),
+        {
+          loading: "Adicionando...",
+          success: "Pedido adicionado com sucesso! :D",
+          error: "Erro ao adicionar pedido. :(",
+        }
+      );
 
-      setOrders((prevOrders) => [...prevOrders, newOrderWithId]);
+      await getOrders();
       setAddModalOpen(false);
       setNewOrder({
-        customerName: "",
-        customerEmail: "",
-        customerNumber: "",
-        lensId: "",
-        dateId: "",
-        customerSignature: "",
-        date: null,
+        customer_name: "",
+        customer_email: "",
+        customer_number: "",
+        lens_id: null,
+        term_id: null,
+        customer_signature: "",
       });
 
       if (signatureRef.current) {
@@ -204,15 +193,15 @@ export default function Home() {
     }
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editOrder) return;
 
     if (
-      !newOrder.customerName ||
-      !newOrder.customerNumber ||
-      !newOrder.lensId ||
-      !newOrder.dateId ||
-      !newOrder.customerSignature
+      !newOrder.customer_name ||
+      !newOrder.customer_number ||
+      !newOrder.lens_id ||
+      !newOrder.term_id ||
+      !newOrder.customer_signature
     ) {
       alert("Preencha todos os campos corretamente e assine o pedido!");
       return;
@@ -221,46 +210,70 @@ export default function Home() {
     const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (!phoneRegex.test(newOrder.customerNumber)) {
+    if (!phoneRegex.test(newOrder.customer_number)) {
       alert("O número de telefone deve estar no formato (xx) xxxxx-xxxx.");
       return;
     }
 
-    if (newOrder.customerEmail && !emailRegex.test(newOrder.customerEmail)) {
+    if (newOrder.customer_email && !emailRegex.test(newOrder.customer_email)) {
       alert("Por favor, insira um email válido.");
       return;
     }
 
     if (confirm("Deseja confirmar a edição da compra?")) {
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.id === editOrder.id ? { ...editOrder, ...newOrder } : order
-        )
+      toast.promise(
+        async () => {
+          await updateOrder(editOrder.id, newOrder);
+          await getOrders();
+          setAddModalOpen(false);
+          setIsEdit(false);
+          setEditOrder(null);
+          setNewOrder({
+            customer_name: "",
+            customer_email: "",
+            customer_number: "",
+            lens_id: null,
+            term_id: null,
+            customer_signature: "",
+          });
+        },
+        {
+          loading: "Atualizando pedido...",
+          success: "Pedido atualizado com sucesso! :D",
+          error: "Erro ao atualizar pedido. :(",
+        }
       );
-
-      setAddModalOpen(false);
-      setIsEdit(false);
-      setEditOrder(null);
-      setNewOrder({
-        customerName: "",
-        customerEmail: "",
-        customerNumber: "",
-        lensId: "",
-        dateId: "",
-        customerSignature: "",
-        date: null,
-      });
     }
   };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Tem certeza que deseja excluir este pedido?")) {
+      toast.promise(
+        async () => {
+          await deleteOrder(id);
+          await getOrders();
+        },
+        {
+          loading: "Deletando pedido...",
+          success: "Pedido deletado com sucesso! :D",
+          error: "Erro ao deletar pedido. :(",
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    getOrders();
+  }, []);
 
   useEffect(() => {
     if (!editOrder) return;
 
     setIsModified(
-      newOrder.customerName !== editOrder.customerName ||
-        newOrder.customerEmail !== editOrder.customerEmail ||
-        newOrder.customerNumber !== editOrder.customerNumber ||
-        newOrder.lensId !== editOrder.lensId
+      newOrder.customer_name !== editOrder.customer_name ||
+        newOrder.customer_email !== editOrder.customer_email ||
+        newOrder.customer_number !== editOrder.customer_number ||
+        newOrder.lens_id !== editOrder.lens_id
     );
   }, [newOrder, editOrder]);
 
@@ -295,12 +308,13 @@ export default function Home() {
       <OrderModal
         open={addModalOpen}
         onClose={onCloseModal}
+        orderId={editOrder?.id}
         newOrder={newOrder}
         setNewOrder={setNewOrder}
         isEdit={isEdit}
         isModified={isModified}
         lenses={lens}
-        dates={dates}
+        terms={terms}
         signatureRef={signatureRef}
         handleChange={handleChange}
         handlePhoneChange={handlePhoneChange}

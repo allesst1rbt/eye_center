@@ -1,4 +1,4 @@
-import { Dates, Lens, Order } from "@/types";
+import { Lens, Order, Terms } from "@/types";
 import { Autocomplete, Box, Modal, TextField, Typography } from "@mui/material";
 import SignatureCanvas from "react-signature-canvas";
 import CustomButton from "./CustomButton";
@@ -6,12 +6,13 @@ import CustomButton from "./CustomButton";
 interface OrderModalProps {
   open: boolean;
   onClose: () => void;
-  newOrder: any;
-  setNewOrder: React.Dispatch<React.SetStateAction<any>>;
+  orderId?: number;
+  newOrder: Omit<Order, "id">;
+  setNewOrder: React.Dispatch<React.SetStateAction<Omit<Order, "id">>>;
   isEdit: boolean;
   isModified: boolean;
   lenses: Lens[];
-  dates: Dates[];
+  terms: Terms[];
   signatureRef: React.RefObject<SignatureCanvas | null>;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhoneChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -30,7 +31,7 @@ export default function OrderModal({
   isEdit,
   isModified,
   lenses,
-  dates,
+  terms,
   signatureRef,
   handleChange,
   handlePhoneChange,
@@ -78,27 +79,27 @@ export default function OrderModal({
         <TextField
           fullWidth
           label="Nome do Cliente"
-          name="customerName"
-          value={newOrder.customerName}
+          name="customer_name"
+          value={newOrder.customer_name}
           onChange={handleChange}
           margin="dense"
         />
         <TextField
           fullWidth
           label="Email do Cliente (Opcional)"
-          name="customerEmail"
-          value={newOrder.customerEmail}
+          name="customer_email"
+          value={newOrder.customer_email}
           onChange={handleChange}
           margin="dense"
         />
         <TextField
           fullWidth
           label="Telefone do Cliente (WhatsApp)"
-          name="customerNumber"
+          name="customer_number"
           value={
             !isEdit
-              ? newOrder.customerNumber
-              : formatPhoneNumber(newOrder.customerNumber)
+              ? newOrder.customer_number
+              : formatPhoneNumber(newOrder.customer_number)
           }
           onChange={handlePhoneChange}
           margin="dense"
@@ -110,14 +111,13 @@ export default function OrderModal({
           defaultValue={
             !isEdit
               ? null
-              : lenses.find((lens) => String(lens.id) === newOrder.lensId) ||
-                null
+              : lenses.find((lens) => lens.id === newOrder.lens_id) || null
           }
           getOptionLabel={(option) => option.name}
           onChange={(_, value) =>
-            setNewOrder((prevOrder: Order) => ({
+            setNewOrder((prevOrder) => ({
               ...prevOrder,
-              lensId: value ? String(value.id) : "",
+              lens_id: value ? value.id : null,
             }))
           }
           sx={styles.autocomplete}
@@ -126,18 +126,17 @@ export default function OrderModal({
 
         <Autocomplete
           disablePortal
-          options={dates}
+          options={terms}
           defaultValue={
             !isEdit
               ? null
-              : dates.find((date) => String(date.id) === newOrder.dateId) ||
-                null
+              : terms.find((term) => term.id === newOrder.term_id) || null
           }
           getOptionLabel={(option) => option.expire_date}
           onChange={(_, value) =>
-            setNewOrder((prevOrder: Order) => ({
+            setNewOrder((prevOrder) => ({
               ...prevOrder,
-              dateId: value ? String(value.id) : "",
+              term_id: value ? value.id : null,
             }))
           }
           sx={styles.autocomplete}
@@ -177,7 +176,7 @@ export default function OrderModal({
             />
           ) : (
             <img
-              src={newOrder.customerSignature}
+              src={newOrder.customer_signature}
               alt="Assinatura do Cliente"
               className="signature-image"
             />
