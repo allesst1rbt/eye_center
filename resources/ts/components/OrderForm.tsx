@@ -73,7 +73,7 @@ export default function OrderModal({
     <Modal open={open} onClose={onClose}>
       <Box sx={styles.container}>
         <Typography id="modal-title" variant="h6">
-          Adicionar Pedido
+          {isEdit ? "Editar pedido" : "Adicionar Pedido"}
         </Typography>
 
         <TextField
@@ -130,17 +130,17 @@ export default function OrderModal({
           defaultValue={
             !isEdit
               ? null
-              : terms.find((term) => term.id === newOrder.term_id) || null
+              : terms.find((term) => term.id === newOrder.terms_id) || null
           }
           getOptionLabel={(option) => option.expire_date}
           onChange={(_, value) =>
             setNewOrder((prevOrder) => ({
               ...prevOrder,
-              term_id: value ? value.id : null,
+              terms_id: value ? value.id : null,
             }))
           }
           sx={styles.autocomplete}
-          renderInput={(params) => <TextField {...params} label="Prazo" />}
+          renderInput={(params) => <TextField {...params} label="Validade" />}
         />
 
         <div

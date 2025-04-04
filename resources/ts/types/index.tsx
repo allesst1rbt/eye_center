@@ -5,7 +5,7 @@ export interface Order {
   customer_number: string;
   lens_id: number | null;
   customer_signature: string;
-  term_id: number | null;
+  terms_id: number | null;
 }
 
 export interface Lens {

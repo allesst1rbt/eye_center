@@ -31,7 +31,7 @@ export default function Home() {
     customer_number: "",
     lens_id: null,
     customer_signature: "",
-    term_id: null,
+    terms_id: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +68,7 @@ export default function Home() {
       customer_number: "",
       lens_id: null,
       customer_signature: "",
-      term_id: null,
+      terms_id: null,
     });
 
     signatureRef.current?.clear();
@@ -113,7 +113,7 @@ export default function Home() {
       headerName: "Prazo",
       width: 130,
       valueGetter: (_, row: Order) =>
-        terms.find((d) => String(d.id) === String(row.term_id))?.expire_date ||
+        terms.find((d) => String(d.id) === String(row.terms_id))?.expire_date ||
         "N/A",
     },
     {
@@ -136,7 +136,7 @@ export default function Home() {
       !newOrder.customer_name ||
       !newOrder.customer_number ||
       !newOrder.lens_id ||
-      !newOrder.term_id ||
+      !newOrder.terms_id ||
       !newOrder.customer_signature
     ) {
       alert("Preencha todos os campos corretamente e assine o pedido!");
@@ -163,6 +163,8 @@ export default function Home() {
       return;
     }
 
+    console.log("New Order:", JSON.stringify(newOrder));
+
     if (confirm("Deseja realmente adicionar essa compra?")) {
       toast.promise(
         createOrder({
@@ -183,7 +185,7 @@ export default function Home() {
         customer_email: "",
         customer_number: "",
         lens_id: null,
-        term_id: null,
+        terms_id: null,
         customer_signature: "",
       });
 
@@ -200,17 +202,19 @@ export default function Home() {
       !newOrder.customer_name ||
       !newOrder.customer_number ||
       !newOrder.lens_id ||
-      !newOrder.term_id ||
+      !newOrder.terms_id ||
       !newOrder.customer_signature
     ) {
       alert("Preencha todos os campos corretamente e assine o pedido!");
       return;
     }
 
+    const formattedPhone = formatPhoneNumber(newOrder.customer_number);
+
     const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (!phoneRegex.test(newOrder.customer_number)) {
+    if (!phoneRegex.test(formattedPhone)) {
       alert("O número de telefone deve estar no formato (xx) xxxxx-xxxx.");
       return;
     }
@@ -223,7 +227,10 @@ export default function Home() {
     if (confirm("Deseja confirmar a edição da compra?")) {
       toast.promise(
         async () => {
-          await updateOrder(editOrder.id, newOrder);
+          await updateOrder(editOrder.id, {
+            ...newOrder,
+            customer_number: formattedPhone,
+          });
           await getOrders();
           setAddModalOpen(false);
           setIsEdit(false);
@@ -233,7 +240,7 @@ export default function Home() {
             customer_email: "",
             customer_number: "",
             lens_id: null,
-            term_id: null,
+            terms_id: null,
             customer_signature: "",
           });
         },
