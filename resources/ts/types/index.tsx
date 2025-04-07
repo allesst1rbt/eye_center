@@ -1,9 +1,10 @@
 export interface Order {
-  id: number;
+  id?: number;
   customer_name: string;
   customer_email?: string;
   customer_number: string;
   lens_id: number | null;
+  customer_birthdate: string;
   customer_signature: string;
   terms_id: number | null;
 }

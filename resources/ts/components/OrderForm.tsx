@@ -1,4 +1,5 @@
 import { Lens, Order, Terms } from "@/types";
+import { formatDate } from "@/utils/formatDate";
 import { Autocomplete, Box, Modal, TextField, Typography } from "@mui/material";
 import SignatureCanvas from "react-signature-canvas";
 import CustomButton from "./CustomButton";
@@ -86,6 +87,18 @@ export default function OrderModal({
         />
         <TextField
           fullWidth
+          label="Data de Nascimento do Cliente"
+          name="customer_birthdate"
+          value={
+            !isEdit
+              ? newOrder.customer_birthdate
+              : formatDate(newOrder.customer_birthdate)
+          }
+          onChange={handleChange}
+          margin="dense"
+        />
+        <TextField
+          fullWidth
           label="Email do Cliente (Opcional)"
           name="customer_email"
           value={newOrder.customer_email}
@@ -99,7 +112,7 @@ export default function OrderModal({
           value={
             !isEdit
               ? newOrder.customer_number
-              : formatPhoneNumber(newOrder.customer_number)
+              : formatPhoneNumber(newOrder.customer_number.slice(2, 13))
           }
           onChange={handlePhoneChange}
           margin="dense"

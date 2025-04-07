@@ -4,6 +4,7 @@ import OrderModal from "@/components/OrderForm";
 import { useLens } from "@/contexts/lens/LensContext";
 import { useOrderContext } from "@/contexts/orders/OrderContext";
 import { Order } from "@/types";
+import { formatDate } from "@/utils/formatDate";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 import { Paper } from "@mui/material";
@@ -25,20 +26,23 @@ export default function Home() {
   const { orders, getOrders, createOrder, updateOrder, deleteOrder } =
     useOrderContext();
 
-  const [newOrder, setNewOrder] = useState<Omit<Order, "id">>({
+  const resetedOrder = {
     customer_name: "",
     customer_email: "",
+    customer_birthdate: "",
     customer_number: "",
     lens_id: null,
     customer_signature: "",
     terms_id: null,
-  });
+  };
+
+  const [newOrder, setNewOrder] = useState<Omit<Order, "id">>(resetedOrder);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewOrder((prevOrder) => ({
       ...prevOrder,
-      [name]: value,
+      [name]: name === "customer_birthdate" ? formatDate(value) : value,
     }));
   };
 
@@ -62,14 +66,7 @@ export default function Home() {
   };
 
   const onCloseModal = () => {
-    setNewOrder({
-      customer_name: "",
-      customer_email: "",
-      customer_number: "",
-      lens_id: null,
-      customer_signature: "",
-      terms_id: null,
-    });
+    setNewOrder(resetedOrder);
 
     signatureRef.current?.clear();
     setAddModalOpen(false);
@@ -169,7 +166,7 @@ export default function Home() {
       toast.promise(
         createOrder({
           ...newOrder,
-          customer_number: newOrder.customer_number.replace(/\D/g, ""),
+          customer_number: `55${newOrder.customer_number.replace(/\D/g, "")}`,
         }),
         {
           loading: "Adicionando...",
@@ -180,14 +177,7 @@ export default function Home() {
 
       await getOrders();
       setAddModalOpen(false);
-      setNewOrder({
-        customer_name: "",
-        customer_email: "",
-        customer_number: "",
-        lens_id: null,
-        terms_id: null,
-        customer_signature: "",
-      });
+      setNewOrder(resetedOrder);
 
       if (signatureRef.current) {
         signatureRef.current.clear();
@@ -227,22 +217,15 @@ export default function Home() {
     if (confirm("Deseja confirmar a edição da compra?")) {
       toast.promise(
         async () => {
-          await updateOrder(editOrder.id, {
+          await updateOrder(editOrder.id!, {
             ...newOrder,
-            customer_number: formattedPhone,
+            customer_number: `55${formattedPhone}`,
           });
           await getOrders();
           setAddModalOpen(false);
           setIsEdit(false);
           setEditOrder(null);
-          setNewOrder({
-            customer_name: "",
-            customer_email: "",
-            customer_number: "",
-            lens_id: null,
-            terms_id: null,
-            customer_signature: "",
-          });
+          setNewOrder(resetedOrder);
         },
         {
           loading: "Atualizando pedido...",

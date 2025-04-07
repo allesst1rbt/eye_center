@@ -26,7 +26,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({
 
       console.log("Orders Response: ", orders_response);
 
-      setOrders(orders_response);
+      setOrders(orders_response.toReversed());
     } catch (error) {
       console.error("Erro ao buscar pedidos: ", error);
     } finally {
