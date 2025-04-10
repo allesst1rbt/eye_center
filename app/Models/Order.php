@@ -12,7 +12,6 @@ class Order extends Model
         'customer_number',
         'customer_birthdate',
         'lens_id',
-        'customer_signature',
         'terms_id'
     ];
 

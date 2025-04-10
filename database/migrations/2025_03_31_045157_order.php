@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('customer_birthdate');
 
             $table->foreignId(column: 'lens_id');
-            $table->longText('customer_signature');
             $table->foreignId(column: 'terms_id');
 
             $table->timestamps();
