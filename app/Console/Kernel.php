@@ -13,6 +13,6 @@ class Kernel extends ConsoleKernel
                  ->daily()
                  ->at('23:00'); 
         $schedule->command('users:send-birthday-wishes')
-                 ->dailyAt('09:00');
+                 ->dailyAt( '09:00');
     }
 }

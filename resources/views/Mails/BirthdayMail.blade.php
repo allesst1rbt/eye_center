@@ -22,10 +22,15 @@
 </head>
 <body>
     <div class="birthday-card">
-        <h1 class="birthday-title">🎉 Happy Birthday, {{ $order->customer_name }}! 🎂</h1>
+        <h1 class="birthday-title">🎉 Olá, {{ $order->customer_name }}! 🎂</h1>
         
         <div class="birthday-message">
-            <p>We hope your day is filled with joy, laughter, and wonderful moments!</p>
+            <p> o Eye Center deseja a você um Feliz Aniversário e que você sempre possa
+                ver o melhor da vida!
+                Para comemorarmos essa data especial, durante o seu mês, aproveite 10% de desconto em
+                nossos serviços.
+                Atenciosamente,
+                Eye Center.</p>
             
             <p>As a valued customer, we want to make your birthday special.</p>
             

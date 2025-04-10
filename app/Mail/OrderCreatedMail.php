@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
-class ExpireDateTerms extends Mailable
+class OrderCreatedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -21,8 +21,9 @@ class ExpireDateTerms extends Mailable
 
     public function build()
     {
-        return $this->view('Mails.ExpireDateMail')
-            ->subject('Hora de renovar suas lentes!')
+        return $this->view('Mails.OrderCreatedMail')
+            ->subject('Eye Center agradece a sua preferência! Veja como aproveitar ao máximo a sua
+adaptação de lentes')
             ->from(env('MAIL_FROM_ADDRESS'))
             ->to($this->order->customer_email);
     }
