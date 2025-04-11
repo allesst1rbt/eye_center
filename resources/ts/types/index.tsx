@@ -5,7 +5,6 @@ export interface Order {
   customer_number: string;
   lens_id: number | null;
   customer_birthdate: string;
-  customer_signature: string;
   terms_id: number | null;
 }
 
