@@ -9,7 +9,7 @@ import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 import { Paper } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import SignatureCanvas from "react-signature-canvas";
 
@@ -127,6 +127,52 @@ export default function Home() {
       ),
     },
   ];
+
+  const handleSubmit = useCallback(
+    async (type: "add" | "edit", data: Order) => {
+      const formattedOrder: Order = {
+        ...data,
+        customer_number: `55${data.customer_number.replace(/\D/g, "")}`,
+      };
+
+      if (type === "add") {
+        if (confirm("Deseja realmente adicionar essa compra?")) {
+          toast.promise(createOrder(formattedOrder), {
+            loading: "Adicionando...",
+            success: "Pedido adicionado com sucesso! :D",
+            error: "Erro ao adicionar pedido. :(",
+          });
+
+          await getOrders();
+          setAddModalOpen(false);
+          setNewOrder(resetedOrder);
+
+          signatureRef.current?.clear();
+        }
+      }
+
+      if (type === "edit") {
+        if (confirm("Deseja confirmar a edição da compra?")) {
+          toast.promise(
+            async () => {
+              await updateOrder(formattedOrder.id!, formattedOrder);
+              await getOrders();
+              setAddModalOpen(false);
+              setIsEdit(false);
+              setEditOrder(null);
+              setNewOrder(resetedOrder);
+            },
+            {
+              loading: "Atualizando pedido...",
+              success: "Pedido atualizado com sucesso! :D",
+              error: "Erro ao atualizar pedido. :(",
+            }
+          );
+        }
+      }
+    },
+    []
+  );
 
   const handleAddOrder = async () => {
     if (
