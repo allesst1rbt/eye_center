@@ -1,7 +1,6 @@
 import { Lens, Order, Terms } from "@/types";
 import { formatDate } from "@/utils/formatDate";
 import { Autocomplete, Box, Modal, TextField, Typography } from "@mui/material";
-import SignatureCanvas from "react-signature-canvas";
 import CustomButton from "./CustomButton";
 
 interface OrderModalProps {
@@ -14,11 +13,8 @@ interface OrderModalProps {
   isModified: boolean;
   lenses: Lens[];
   terms: Terms[];
-  signatureRef: React.RefObject<SignatureCanvas | null>;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhoneChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSaveSignature: () => void;
-  handleClearSignature: () => void;
   handleSaveEdit: () => void;
   handleAddOrder: () => void;
   formatPhoneNumber: (phone: string) => string;
@@ -33,11 +29,8 @@ export default function OrderModal({
   isModified,
   lenses,
   terms,
-  signatureRef,
   handleChange,
   handlePhoneChange,
-  handleSaveSignature,
-  handleClearSignature,
   handleSaveEdit,
   handleAddOrder,
   formatPhoneNumber,
@@ -155,46 +148,6 @@ export default function OrderModal({
           sx={styles.autocomplete}
           renderInput={(params) => <TextField {...params} label="Validade" />}
         />
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingRight: 10,
-          }}
-        >
-          <Typography variant="subtitle1" sx={styles.signatureTitle}>
-            Assinatura do Cliente
-          </Typography>
-          {!isEdit && (
-            <Typography
-              variant="subtitle1"
-              onClick={handleClearSignature}
-              sx={{ mt: 2, color: "red", cursor: "pointer" }}
-            >
-              Limpar
-            </Typography>
-          )}
-        </div>
-
-        <Box sx={styles.signatureBox}>
-          {!isEdit ? (
-            <SignatureCanvas
-              ref={signatureRef}
-              canvasProps={{ width: 380, height: 150, className: "sigCanvas" }}
-              penColor="black"
-              backgroundColor="transparent"
-              onEnd={handleSaveSignature}
-            />
-          ) : (
-            <img
-              src={newOrder.customer_signature}
-              alt="Assinatura do Cliente"
-              className="signature-image"
-            />
-          )}
-        </Box>
 
         <CustomButton
           label={isEdit ? "Salvar Alterações" : "Adicionar Pedido"}

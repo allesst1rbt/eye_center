@@ -9,14 +9,11 @@ import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 import { Paper } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import SignatureCanvas from "react-signature-canvas";
 
 export default function Home() {
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
-
-  const signatureRef = useRef<SignatureCanvas | null>(null);
 
   const [editOrder, setEditOrder] = useState<Order | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -46,29 +43,9 @@ export default function Home() {
     }));
   };
 
-  const handleClearSignature = () => {
-    if (signatureRef.current) {
-      signatureRef.current.clear();
-      setNewOrder((prevOrder) => ({
-        ...prevOrder,
-        customer_signature: "",
-      }));
-    }
-  };
-
-  const handleSaveSignature = () => {
-    if (signatureRef.current && !signatureRef.current.isEmpty()) {
-      setNewOrder((prevOrder) => ({
-        ...prevOrder,
-        customer_signature: signatureRef.current!.toDataURL("image/png"),
-      }));
-    }
-  };
-
   const onCloseModal = () => {
     setNewOrder(resetedOrder);
 
-    signatureRef.current?.clear();
     setAddModalOpen(false);
     setIsEdit(false);
   };
@@ -146,8 +123,6 @@ export default function Home() {
           await getOrders();
           setAddModalOpen(false);
           setNewOrder(resetedOrder);
-
-          signatureRef.current?.clear();
         }
       }
 
@@ -179,18 +154,10 @@ export default function Home() {
       !newOrder.customer_name ||
       !newOrder.customer_number ||
       !newOrder.lens_id ||
-      !newOrder.terms_id ||
-      !newOrder.customer_signature
+      !newOrder.terms_id
     ) {
       alert("Preencha todos os campos corretamente e assine o pedido!");
       return;
-    }
-
-    if (signatureRef.current && !signatureRef.current.isEmpty()) {
-      setNewOrder((prevOrder) => ({
-        ...prevOrder,
-        customer_signature: signatureRef.current!.toDataURL("image/png"),
-      }));
     }
 
     const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
@@ -224,10 +191,6 @@ export default function Home() {
       await getOrders();
       setAddModalOpen(false);
       setNewOrder(resetedOrder);
-
-      if (signatureRef.current) {
-        signatureRef.current.clear();
-      }
     }
   };
 
@@ -238,8 +201,7 @@ export default function Home() {
       !newOrder.customer_name ||
       !newOrder.customer_number ||
       !newOrder.lens_id ||
-      !newOrder.terms_id ||
-      !newOrder.customer_signature
+      !newOrder.terms_id
     ) {
       alert("Preencha todos os campos corretamente e assine o pedido!");
       return;
@@ -351,11 +313,8 @@ export default function Home() {
         isModified={isModified}
         lenses={lens}
         terms={terms}
-        signatureRef={signatureRef}
         handleChange={handleChange}
         handlePhoneChange={handlePhoneChange}
-        handleSaveSignature={handleSaveSignature}
-        handleClearSignature={handleClearSignature}
         handleSaveEdit={handleSaveEdit}
         handleAddOrder={handleAddOrder}
         formatPhoneNumber={formatPhoneNumber}
