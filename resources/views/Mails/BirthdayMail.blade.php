@@ -32,10 +32,7 @@
                 Atenciosamente,
                 Eye Center.</p>
             
-            <p>As a valued customer, we want to make your birthday special.</p>
-            
-            
-            <p>Best wishes,<br>
+           
         </div>
     </div>
 </body>
