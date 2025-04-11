@@ -29,7 +29,6 @@ export default function Home() {
     customer_birthdate: "",
     customer_number: "",
     lens_id: null,
-    customer_signature: "",
     terms_id: null,
   };
 

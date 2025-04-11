@@ -20,5 +20,4 @@ export const orderSchema = z.object({
     .refine(isValidDate, { message: "Data de nascimento inválida." }),
   lens_id: z.number({ invalid_type_error: "Selecione uma lente." }),
   terms_id: z.number({ invalid_type_error: "Você deve aceitar os termos." }),
-  customer_signature: z.string().min(1, "Assinatura é obrigatória."),
 });

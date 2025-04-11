@@ -48,19 +48,6 @@ export default function OrderModal({
       p: 4,
     },
     autocomplete: { marginTop: 1 },
-    signatureBox: {
-      width: "100%",
-      height: 150,
-      borderRadius: "8px",
-      border: "1px solid #ccc",
-      backgroundColor: "#f5f5f5",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      overflow: "hidden",
-      flexDirection: "column",
-    },
-    signatureTitle: { mt: 2, color: "GrayText" },
   };
 
   return (
