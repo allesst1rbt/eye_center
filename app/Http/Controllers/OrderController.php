@@ -26,8 +26,10 @@ class OrderController extends Controller
     {
 
         $order = Order::create($request->all());
-        Mail::to($order->customer_email)->send(new OrderCreatedMail($order));
-        $this->sendMessage($order);
+        if ($request->customer_email) {
+            Mail::to($order->customer_email)->send(new OrderCreatedMail($order));
+        }
+        $this->sendMessage(order: $order);
 
         return response()->json($order, 201);
     }

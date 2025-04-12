@@ -24,16 +24,22 @@ class SendOrderExpireDateMail extends Command
             $date = $order->created_at->diffInDays($order->created_at->copy()->addDays($dateToAdd));
             //zap here
             if ($dateToAdd === 5 && $date ===5 ) {
-                Mail::send(view: new ExpireDateTerms($order));
+                if ($order->customer_email) {
+                    Mail::send(view: new ExpireDateTerms($order));
+                }
                 $this->sendMessage($order);
             }
             if ($dateToAdd >30 && $dateToAdd <= 45 && $date ===10) {
-                Mail::send(view: new ExpireDateTerms($order));
+                if ($order->customer_email) {
+                    Mail::send(view: new ExpireDateTerms($order));
+                }
                 $this->sendMessage($order);
 
             }
             if ($dateToAdd >45  && $date === 30) {
-                Mail::send(view: new ExpireDateTerms($order));
+                if ($order->customer_email) {
+                    Mail::send(view: new ExpireDateTerms($order));
+                }
                 $this->sendMessage($order);
             }
         }

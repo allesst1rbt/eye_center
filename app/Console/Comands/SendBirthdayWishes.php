@@ -20,7 +20,9 @@ class SendBirthdayWishes extends Command
 
         foreach ($Orders as $Order) {
             try {
-                $this->sendBirthdayEmail($Order);
+                if ($Order->customer_email) {
+                    $this->sendBirthdayEmail($Order);
+                }
                 $this->info("Birthday wish sent to {$Order->customer_name}");
             } catch (\Exception $e) {
                 $this->error("Failed to send birthday wish to {$Order->customer_name}: {$e->getMessage()}");
