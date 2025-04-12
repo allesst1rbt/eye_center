@@ -12,7 +12,7 @@ class MessageService
     public function __construct()
     {
         $this->baseUrl = env('MESSAGE_SERVICE_URL', 'http://0.0.0.0:8081');
-        $this->apiKey = env('MESSAGE_SERVICE_API_KEY', '');
+        $this->apiKey = env('MESSAGE_SERVICE_API_KEY', 'mude-me');
     }
 
     public function sendText(string $number, string $text)
