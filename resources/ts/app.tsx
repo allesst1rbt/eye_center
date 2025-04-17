@@ -4,17 +4,20 @@ import { AuthProvider } from "./contexts/auth/AuthProvider";
 import { LensProvider } from "./contexts/lens/LensProvider";
 import { OrderProvider } from "./contexts/orders/OrderProvider";
 import { AllRoutes } from "./routes";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
-const appRoot = document.getElementById("app")!;
-const root = createRoot(appRoot);
 
-root.render(
-  <AuthProvider>
-    <LensProvider>
-      <OrderProvider>
-        <Toaster reverseOrder={false} />
-        <AllRoutes />
-      </OrderProvider>
-    </LensProvider>
-  </AuthProvider>
+ReactDOM.createRoot(document.getElementById('app')!).render(
+    <React.StrictMode>
+         <AuthProvider>
+          <LensProvider>
+            <OrderProvider>
+              <Toaster reverseOrder={false} />
+              <AllRoutes />
+            </OrderProvider>
+          </LensProvider>
+        </AuthProvider>
+    </React.StrictMode>
 );
+

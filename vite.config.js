@@ -4,21 +4,30 @@ import path from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/",
   plugins: [
     laravel({
       input: ["resources/css/app.css", "resources/ts/app.tsx"],
       refresh: true,
+      buildDirectory: "build", // Specify build directory
     }),
     react(),
   ],
+  build: {
+    manifest: {
+      path: 'public', // This will put manifest.json directly in public folder
+    },
+    outDir: "public/build",
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      }
+    }
+  },
   server: {
     hmr: {
       host: "localhost",
     },
- 
   },
-  publicDir: 'public',
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "resources/ts"),
