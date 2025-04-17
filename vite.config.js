@@ -22,6 +22,7 @@ export default defineConfig({
       usePolling: true,
     },
   },
+  publicDir: 'public',
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "resources/ts"),
