@@ -13,14 +13,10 @@ export default defineConfig({
     react(),
   ],
   server: {
-    host: "0.0.0.0",
-    historyApiFallback: true,
     hmr: {
       host: "localhost",
     },
-    watch: {
-      usePolling: true,
-    },
+ 
   },
   publicDir: 'public',
   resolve: {
