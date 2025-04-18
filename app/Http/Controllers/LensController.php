@@ -47,14 +47,14 @@ class LensController extends Controller
      */
     public function store(Request $request)
     {
-        $lens = lens::create($request->all());
+        $lens = Lens::create($request->all());
         return response()->json($lens);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(lens $lens)
+    public function show(Lens $lens)
     {
         return response()->json($lens);
     }
@@ -71,7 +71,7 @@ class LensController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(lens $lens)
+    public function destroy(Lens $lens)
     {
         $lens->delete();
         return response()->json(null, 204);
