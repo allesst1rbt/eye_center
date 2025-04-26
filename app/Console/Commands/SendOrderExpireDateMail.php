@@ -54,7 +54,7 @@ class SendOrderExpireDateMail extends Command
         $messageService = new MessageService();
         $result = $messageService->sendText(
             $order->customer_number,
-            'Your message here'
+            "Olá {{$order->customer_name}},\nÉ difícil acreditar, mas já faz {{$order->terms->expire_date}} desde que você adquiriu suas lentes e queremos saber se\ntem atendido suas necessidades. Você já pode adquirir reposição ou caso queira experimentar\noutro modelo, estamos a sua disposição. \nEstamos aqui para ajudar no que for necessário.\nEye Center."
         );
 
         if ($result['success']) {
