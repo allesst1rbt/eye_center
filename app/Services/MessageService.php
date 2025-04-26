@@ -21,7 +21,7 @@ class MessageService
             $response = Http::withHeaders([
                 'apikey' => $this->apiKey,
                 'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/message/sendText/teste', [
+            ])->post($this->baseUrl . '/message/sendText/Eye Center', [
                 'number' => $number,
                 'text' => $text
             ]);
