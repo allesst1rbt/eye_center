@@ -15,7 +15,7 @@ import SidebarItem from "./SidebarItem";
 export function CustomSidebar() {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { updateLens } = useLens();
+  const { getLens, updateLens } = useLens();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit = useCallback(
@@ -31,7 +31,10 @@ export function CustomSidebar() {
           formData.append("excel", blob, selectedFile.name);
 
           toast.promise(
-            updateLens(formData),
+            async () => {
+              await updateLens(formData);
+              await getLens();
+            },
             {
               loading: "Atualizando...",
               success: <b>Lentes atualizadas com sucesso! :D</b>,
@@ -41,8 +44,6 @@ export function CustomSidebar() {
           );
         } catch (error) {
           console.error("Erro ao atualizar lentes: ", error);
-        } finally {
-          setTimeout(() => navigate(0), 1500);
         }
       }
     },
