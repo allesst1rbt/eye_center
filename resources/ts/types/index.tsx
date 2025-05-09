@@ -17,3 +17,15 @@ export interface Terms {
   id: number;
   expire_date: string;
 }
+
+export type OrderStore = {
+  orders: Order[];
+  loadingGetOrders: boolean;
+  loadingCreateOrder: boolean;
+  loadingUpdateOrder: boolean;
+  loadingDeleteOrder: boolean;
+  getOrders: () => Promise<void>;
+  createOrder: (order: Omit<Order, "id">) => Promise<void>;
+  updateOrder: (id: number, order: Omit<Order, "id">) => Promise<void>;
+  deleteOrder: (id: number) => Promise<void>;
+};

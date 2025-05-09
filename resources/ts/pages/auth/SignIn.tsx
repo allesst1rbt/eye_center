@@ -1,5 +1,5 @@
 import CustomInput from "@/components/CustomInput";
-import { useAuth } from "@/contexts/auth/AuthContext";
+import { useAuthStore } from "@/stores/authStore";
 import Logo from "@assets/eye-center-logo.svg";
 import "@css/SignIn.css";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +18,7 @@ type SignInFormData = {
 };
 
 const SignIn = () => {
-  const { login, token } = useAuth();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);

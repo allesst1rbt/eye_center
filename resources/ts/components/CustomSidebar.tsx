@@ -1,6 +1,6 @@
-import { useAuth } from "@/contexts/auth/AuthContext";
-import { useLens } from "@/contexts/lens/LensContext";
 import { routePaths } from "@/routes";
+import { useAuthStore } from "@/stores/authStore";
+import { useLensStore } from "@/stores/lensStore";
 import Logo from "@assets/eye-center-logo.svg";
 import "@css/CustomSidebar.css";
 import FormData from "form-data";
@@ -14,8 +14,8 @@ import SidebarItem from "./SidebarItem";
 
 export function CustomSidebar() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const { getLens, updateLens } = useLens();
+  const { logout } = useAuthStore();
+  const { getLens, updateLens } = useLensStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit = useCallback(

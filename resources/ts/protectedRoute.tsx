@@ -1,11 +1,11 @@
+import BaseLayout from "@/components/BaseLayout";
+import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import BaseLayout from "./components/BaseLayout";
-import { useAuth } from "./contexts/auth/AuthContext";
 
 export function ProtectedRoute() {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token } = useAuthStore();
 
   useEffect(() => {
     if (!token) {
