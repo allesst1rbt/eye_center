@@ -14,14 +14,14 @@ export default defineConfig({
   ],
   build: {
     manifest: {
-      path: 'public', // This will put manifest.json directly in public folder
+      path: "public", // This will put manifest.json directly in public folder
     },
     outDir: "public/build",
     rollupOptions: {
       output: {
         manualChunks: undefined,
-      }
-    }
+      },
+    },
   },
   server: {
     hmr: {
