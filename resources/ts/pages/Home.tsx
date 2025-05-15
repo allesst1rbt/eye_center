@@ -72,19 +72,19 @@ export default function Home() {
     {
       field: "customer_name",
       headerName: "Cliente",
-      width: 180,
+      width: 300,
     },
     {
       field: "lens_id",
       headerName: "Lente",
-      width: 180,
+      width: 200,
       valueGetter: (_, row: Order) =>
         lens.find((l) => String(l.id) === String(row.lens_id))?.name,
     },
     {
       field: "term_id",
       headerName: "Prazo",
-      width: 130,
+      width: 150,
       valueGetter: (_, row: Order) =>
         terms.find((d) => String(d.id) === String(row.terms_id))?.expire_date ||
         "N/A",
@@ -92,14 +92,14 @@ export default function Home() {
     {
       field: "created_at",
       headerName: "Data do Pedido",
-      width: 130,
+      width: 150,
       valueGetter: (_, row: Order) =>
         row.created_at && formatISODate(row.created_at),
     },
     {
       field: "actions",
       headerName: "Ações",
-      width: 120,
+      width: 100,
       sortable: false,
       renderCell: (params) => (
         <OrderActions
