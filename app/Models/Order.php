@@ -17,11 +17,11 @@ class Order extends Model
 
     public function Lens()
     {
-        return $this->hasOne(Lens::class);
+        return $this->belongsTo(Lens::class);
     }
 
     public function Term()
     {
-        return $this->hasOne(Terms::class);
+        return $this->belongsTo(Terms::class);
     }
 }

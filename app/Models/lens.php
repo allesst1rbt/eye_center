@@ -15,6 +15,6 @@ class Lens extends Model
 
      public function Order()
     {
-        return $this->belongsToMany(Order::class);
+        return $this->hasMany(Order::class);
     }
 }
