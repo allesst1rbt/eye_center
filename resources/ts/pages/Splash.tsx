@@ -1,6 +1,6 @@
 import EyeCenterLogo from "@/assets/eye-center-logo.svg";
-import { useAuth } from "@/contexts/auth/AuthContext";
 import { routePaths } from "@/routes";
+import { useAuthStore } from "@/stores/authStore";
 import { setRedirectToLogin } from "@/utils/api";
 import "@css/Splash.css";
 import { CSSProperties, useEffect } from "react";
@@ -14,7 +14,7 @@ const override: CSSProperties = {
 
 const Splash = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token } = useAuthStore();
 
   const loginPath = routePaths.login;
 

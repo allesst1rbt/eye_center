@@ -1,8 +1,8 @@
 import CustomButton from "@/components/CustomButton";
 import OrderActions from "@/components/OrderActions";
 import OrderModal from "@/components/OrderForm";
-import { useLens } from "@/contexts/lens/LensContext";
-import { useOrderContext } from "@/contexts/orders/OrderContext";
+import { useLensStore } from "@/stores/lensStore";
+import { useOrderStore } from "@/stores/orderStore";
 import { Order } from "@/types";
 import { formatDate } from "@/utils/formatDate";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
@@ -19,9 +19,9 @@ export default function Home() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isModified, setIsModified] = useState<boolean>(false);
 
-  const { lens, terms } = useLens();
+  const { lens, terms, getLens } = useLensStore();
   const { orders, getOrders, createOrder, updateOrder, deleteOrder } =
-    useOrderContext();
+    useOrderStore();
 
   const resetedOrder = {
     customer_name: "",
@@ -262,6 +262,10 @@ export default function Home() {
   useEffect(() => {
     getOrders();
   }, []);
+
+  useEffect(() => {
+    getLens();
+  }, [getLens]);
 
   useEffect(() => {
     if (!editOrder) return;
