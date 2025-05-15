@@ -20,7 +20,7 @@ class SendOrderExpireDateMail extends Command
         // Get today's orders
         $orders = Order::with('Term')->get();
         foreach ($orders as $order) {
-            $dateToAdd =explode(' ',$order->terms->expire_date)[0];
+            $dateToAdd =explode(' ',$order->Term->expire_date)[0];
             $date = $order->created_at->diffInDays($order->created_at->copy()->addDays($dateToAdd));
             //zap here
             if ($dateToAdd === 5 && $date ===5 ) {
