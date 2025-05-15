@@ -6,6 +6,7 @@ export interface Order {
   lens_id: number | null;
   customer_birthdate: string;
   terms_id: number | null;
+  created_at?: string;
 }
 
 export interface Lens {

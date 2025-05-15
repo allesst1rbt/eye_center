@@ -1,6 +1,14 @@
 import { Lens, Order, Terms } from "@/types";
-import { formatDate } from "@/utils/formatDate";
-import { Autocomplete, Box, Modal, TextField, Typography } from "@mui/material";
+import { formatDate, formatISODate } from "@/utils/formatDate";
+import {
+  Autocomplete,
+  Box,
+  Modal,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import CustomButton from "./CustomButton";
 
 interface OrderModalProps {
@@ -35,106 +43,175 @@ export default function OrderModal({
   handleAddOrder,
   formatPhoneNumber,
 }: OrderModalProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const styles = {
     container: {
       position: "absolute",
       top: "50%",
       left: "50%",
       transform: "translate(-50%, -50%)",
-      width: 400,
+      width: {
+        xs: "75%",
+        sm: "65%",
+        md: "55%",
+        lg: "75%",
+      },
+      maxHeight: {
+        xs: "90vh",
+        md: "auto",
+      },
+      overflowY: {
+        xs: "auto",
+        md: "visible",
+      },
       borderRadius: 2,
       bgcolor: "background.paper",
       boxShadow: "4px 4px 20px 0px rgba(0,0,0,0.35)",
       p: 4,
     },
-    autocomplete: { marginTop: 1 },
+    formContainer: {
+      display: {
+        xs: "block",
+        md: "flex",
+      },
+      gap: 2,
+      justifyContent: "space-between",
+    },
+    leftSection: {
+      flex: 1,
+      marginRight: {
+        xs: 0,
+        md: 2,
+      },
+    },
+    rightSection: {
+      flex: 1,
+      marginLeft: {
+        xs: 0,
+        md: 2,
+      },
+    },
+    autocomplete: {
+      marginTop: 2,
+    },
+    formField: { marginBottom: 2 },
   };
 
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={styles.container}>
-        <Typography id="modal-title" variant="h6">
+        <Typography id="modal-title" variant="h6" sx={{ marginBottom: 3 }}>
           {isEdit ? "Editar pedido" : "Adicionar Pedido"}
         </Typography>
 
-        <TextField
-          fullWidth
-          label="Nome do Cliente"
-          name="customer_name"
-          value={newOrder.customer_name}
-          onChange={handleChange}
-          margin="dense"
-        />
-        <TextField
-          fullWidth
-          label="Data de Nascimento do Cliente"
-          name="customer_birthdate"
-          value={
-            !isEdit
-              ? newOrder.customer_birthdate
-              : formatDate(newOrder.customer_birthdate)
-          }
-          onChange={handleChange}
-          margin="dense"
-        />
-        <TextField
-          fullWidth
-          label="Email do Cliente (Opcional)"
-          name="customer_email"
-          value={newOrder.customer_email}
-          onChange={handleChange}
-          margin="dense"
-        />
-        <TextField
-          fullWidth
-          label="Telefone do Cliente (WhatsApp)"
-          name="customer_number"
-          value={
-            !isEdit
-              ? newOrder.customer_number
-              : formatPhoneNumber(newOrder.customer_number.slice(2, 13))
-          }
-          onChange={handlePhoneChange}
-          margin="dense"
-        />
+        <Box sx={styles.formContainer}>
+          <Box sx={styles.leftSection}>
+            <TextField
+              fullWidth
+              label="Nome do Cliente"
+              name="customer_name"
+              value={newOrder.customer_name}
+              onChange={handleChange}
+              margin="dense"
+              sx={styles.formField}
+            />
+            <TextField
+              fullWidth
+              label="Data de Nascimento do Cliente"
+              name="customer_birthdate"
+              value={
+                !isEdit
+                  ? newOrder.customer_birthdate
+                  : formatDate(newOrder.customer_birthdate)
+              }
+              onChange={handleChange}
+              margin="dense"
+              sx={styles.formField}
+            />
+            <TextField
+              fullWidth
+              label="Email do Cliente (Opcional)"
+              name="customer_email"
+              value={newOrder.customer_email}
+              onChange={handleChange}
+              margin="dense"
+              sx={styles.formField}
+            />
+            <TextField
+              fullWidth
+              label="Telefone do Cliente (WhatsApp)"
+              name="customer_number"
+              value={
+                !isEdit
+                  ? newOrder.customer_number
+                  : formatPhoneNumber(newOrder.customer_number.slice(2, 13))
+              }
+              onChange={handlePhoneChange}
+              margin="dense"
+              sx={styles.formField}
+            />
+          </Box>
 
-        <Autocomplete
-          disablePortal
-          options={lenses}
-          defaultValue={
-            !isEdit
-              ? null
-              : lenses.find((lens) => lens.id === newOrder.lens_id) || null
-          }
-          getOptionLabel={(option) => option.name}
-          onChange={(_, value) =>
-            setNewOrder((prevOrder) => ({
-              ...prevOrder,
-              lens_id: value ? value.id : null,
-            }))
-          }
-          sx={styles.autocomplete}
-          renderInput={(params) => <TextField {...params} label="Lente" />}
-        />
+          <Box sx={styles.rightSection}>
+            <Autocomplete
+              disablePortal
+              options={lenses}
+              defaultValue={
+                !isEdit
+                  ? null
+                  : lenses.find((lens) => lens.id === newOrder.lens_id) || null
+              }
+              getOptionLabel={(option) => option.name}
+              onChange={(_, value) =>
+                setNewOrder((prevOrder) => ({
+                  ...prevOrder,
+                  lens_id: value ? value.id : null,
+                }))
+              }
+              sx={styles.autocomplete}
+              renderInput={(params) => <TextField {...params} label="Lente" />}
+            />
 
-        <Autocomplete
-          disablePortal
-          options={terms}
-          defaultValue={
-            !isEdit
-              ? null
-              : terms.find((term) => term.id === newOrder.terms_id) || null
-          }
-          getOptionLabel={(option) => option.expire_date}
-          onChange={(_, value) =>
-            setNewOrder((prevOrder) => ({
-              ...prevOrder,
-              terms_id: value ? value.id : null,
-            }))
-          }
-          sx={styles.autocomplete}
-          renderInput={(params) => <TextField {...params} label="Validade" />}
-        />
+            <Autocomplete
+              disablePortal
+              options={terms}
+              defaultValue={
+                !isEdit
+                  ? null
+                  : terms.find((term) => term.id === newOrder.terms_id) || null
+              }
+              getOptionLabel={(option) => option.expire_date}
+              onChange={(_, value) =>
+                setNewOrder((prevOrder) => ({
+                  ...prevOrder,
+                  terms_id: value ? value.id : null,
+                }))
+              }
+              sx={styles.autocomplete}
+              renderInput={(params) => (
+                <TextField {...params} label="Validade" />
+              )}
+            />
+
+            {isEdit && newOrder.created_at && (
+              <TextField
+                fullWidth
+                label="Data do Pedido"
+                value={formatISODate(newOrder.created_at)}
+                margin="dense"
+                disabled
+                sx={{
+                  marginTop: 2,
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    WebkitTextFillColor: "rgba(0, 0, 0, 0.87)",
+                  },
+                }}
+              />
+            )}
+          </Box>
+        </Box>
 
         <CustomButton
           label={isEdit ? "Salvar Alterações" : "Adicionar Pedido"}
