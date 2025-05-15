@@ -27,6 +27,7 @@ class OrderController extends Controller
     {
 
         $order = Order::create($request->all())->load('term');
+        dd($order);
         if ($request->customer_email) {
             Mail::to($order->customer_email)->send(new OrderCreatedMail($order));
             Mail::to($order->customer_email)->send(new ExpireDateTerms($order));
