@@ -54,11 +54,11 @@
 }
 
 .submit-button {
-  width: 30%;
+  width: 100%;
   color: #ffffff;
   background-color: #00c3b5;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .request-access {

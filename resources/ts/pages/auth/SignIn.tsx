@@ -31,26 +31,32 @@ const SignIn = () => {
     formState: { errors, isSubmitting },
   } = useForm<SignInFormData>({
     resolver: zodResolver(SignInSchema),
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
-  const handleLogin = useCallback(async (data: FormData) => {
-    await login(data);
-    navigate("/home", { replace: true });
-  }, []);
+  const handleLogin = useCallback(
+    async (data: FormData) => {
+      await login(data);
+      navigate("/home", { replace: true });
+    },
+    [login, navigate]
+  );
 
   const onSubmit = async (data: FormData) => {
-    toast.promise(
-      handleLogin(data),
-      {
-        loading: "Fazendo login...",
-        error: <b>Usuário e/ou senha incorretos :(</b>,
-      },
-      { duration: 1500 }
-    );
-  };
-
-  const handleRequestAccess = () => {
-    console.log("Redirecionar para solicitação de acesso");
+    try {
+      await toast.promise(
+        handleLogin(data),
+        {
+          loading: "Fazendo login...",
+          success: <b>Login realizado com sucesso!</b>,
+          error: <b>Usuário e/ou senha incorretos :(</b>,
+        },
+        { duration: 1500 }
+      );
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   return (
@@ -62,7 +68,11 @@ const SignIn = () => {
           <h2 className="sign-in-text">Entre na sua conta</h2>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="inputs-container">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="inputs-container"
+          noValidate
+        >
           <CustomInput
             label="E-mail"
             type="email"
@@ -77,12 +87,17 @@ const SignIn = () => {
             isPasswordInput
             showPassword={showPassword}
             onClickIcon={toggleShowPassword}
-            onForgotPassword={() =>
-              console.log("Redirecionar para recuperação de senha")
-            }
-            {...register("password")}
+            {...register("password", {
+              onBlur: () => {}, // Prevent validation on blur
+            })}
             error={errors.password?.message}
             onChange={() => clearErrors("password")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSubmit(onSubmit)();
+              }
+            }}
           />
 
           <div className="submit-container">
@@ -93,13 +108,6 @@ const SignIn = () => {
             >
               {isSubmitting ? "Entrando..." : "Entrar"}
             </button>
-
-            <div className="request-access">
-              Novo aqui?{" "}
-              <span className="bold-text" onClick={handleRequestAccess}>
-                Solicite seu acesso
-              </span>
-            </div>
           </div>
         </form>
       </section>

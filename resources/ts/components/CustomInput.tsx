@@ -7,7 +7,6 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isPasswordInput?: boolean;
   showPassword?: boolean;
   onClickIcon?: () => void;
-  onForgotPassword?: () => void;
   error?: string;
 }
 
@@ -16,7 +15,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
   isPasswordInput = false,
   showPassword,
   onClickIcon,
-  onForgotPassword,
   error,
   ...props
 }) => {
@@ -32,11 +30,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
         )}
       </div>
       {error && <span className="error-message">{error}</span>}
-      {isPasswordInput && onForgotPassword && (
-        <span className="forgot-password" onClick={onForgotPassword}>
-          Esqueci a senha
-        </span>
-      )}
     </div>
   );
 };
