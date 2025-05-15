@@ -22,6 +22,6 @@ class Order extends Model
 
     public function Term()
     {
-        return $this->belongsTo(Terms::class);
+        return $this->belongsTo(Terms::class, 'id', 'terms_id');
     }
 }
