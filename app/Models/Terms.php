@@ -12,4 +12,9 @@ class Terms extends Model
     protected $fillable = [
         'expire_date',
     ];
+
+     public function Order()
+    {
+        return $this->belongsToMany(Order::class);
+    }
 }

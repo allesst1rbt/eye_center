@@ -26,7 +26,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
-        $order = Order::create($request->all())->load('term');
+        $order = Order::create($request->all())->load('Term');
         dd($order);
         if ($request->customer_email) {
             Mail::to($order->customer_email)->send(new OrderCreatedMail($order));

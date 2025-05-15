@@ -12,4 +12,9 @@ class Lens extends Model
     protected $fillable = [
         'name',
     ];
+
+     public function Order()
+    {
+        return $this->belongsToMany(Order::class);
+    }
 }

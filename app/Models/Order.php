@@ -15,13 +15,13 @@ class Order extends Model
         'terms_id'
     ];
 
-    public function lens()
+    public function Lens()
     {
-        return $this->belongsTo(Lens::class);
+        return $this->hasOne(Lens::class);
     }
 
-    public function term()
+    public function Term()
     {
-        return $this->belongsTo(Terms::class);
+        return $this->hasOne(Terms::class);
     }
 }
