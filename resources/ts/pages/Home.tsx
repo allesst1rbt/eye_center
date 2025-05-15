@@ -4,7 +4,7 @@ import OrderModal from "@/components/OrderForm";
 import { useLensStore } from "@/stores/lensStore";
 import { useOrderStore } from "@/stores/orderStore";
 import { Order } from "@/types";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate, formatISODate } from "@/utils/formatDate";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 import { Paper } from "@mui/material";
@@ -88,6 +88,13 @@ export default function Home() {
       valueGetter: (_, row: Order) =>
         terms.find((d) => String(d.id) === String(row.terms_id))?.expire_date ||
         "N/A",
+    },
+    {
+      field: "created_at",
+      headerName: "Data do Pedido",
+      width: 130,
+      valueGetter: (_, row: Order) =>
+        row.created_at && formatISODate(row.created_at),
     },
     {
       field: "actions",
