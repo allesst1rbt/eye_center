@@ -88,7 +88,7 @@ const SignIn = () => {
             showPassword={showPassword}
             onClickIcon={toggleShowPassword}
             {...register("password", {
-              onBlur: () => {}, // Prevent validation on blur
+              onBlur: () => {},
             })}
             error={errors.password?.message}
             onChange={() => clearErrors("password")}
