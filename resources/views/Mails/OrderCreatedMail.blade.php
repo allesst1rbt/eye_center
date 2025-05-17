@@ -99,6 +99,12 @@
   </p>
 
   <p>
+    <strong>Deixe seu feedback em nosso perfil, sua opinião é muito importante para todos nós do Eye Center!</strong>
+
+     <a href="https://g.page/r/CcbArEO4PyQYEAg/review"  target="_blank">Eyecenter google pages</a>
+  </p>
+
+  <p>
     Desejamos que as lentes atendam suas expectativas e que você tenha uma excelente
     experiência com elas.
   </p>

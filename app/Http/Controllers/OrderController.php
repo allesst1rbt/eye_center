@@ -78,7 +78,8 @@ class OrderController extends Controller
         $messageService = new MessageService();
         $result = $messageService->sendText(
             $order->customer_number,
-            "Olá {$order->customer_name},\nÉ difícil acreditar, mas já faz {$order->Term->expire_date} desde que você adquiriu suas lentes e queremos saber se\ntem atendido suas necessidades. Você já pode adquirir reposição ou caso queira experimentar\noutro modelo, estamos a sua disposição. \nEstamos aqui para ajudar no que for necessário.\nEye Center."
+         "👁️ Olá {$order->customer_name}, tudo bem?\n\nJá se passaram {$order->Term->expire_date} dias desde que você adquiriu suas lentes conosco e gostaríamos de saber se elas têm atendido suas necessidades.\n\nSe precisar de reposição ou quiser experimentar outro modelo, estamos à disposição para te ajudar! 😊\n\nConte com a gente!\nEye Center"
+
         );
     }
 }
