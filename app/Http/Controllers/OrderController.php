@@ -29,11 +29,14 @@ class OrderController extends Controller
         $order = Order::create($request->all())->load('Term');
         if ($request->customer_email) {
             Mail::to($order->customer_email)->send(new OrderCreatedMail($order));
-            Mail::to($order->customer_email)->send(new ExpireDateTerms($order));
+            if ($order->Term->expire_date === '2 dias') {
+                Mail::to($order->customer_email)->send(new ExpireDateTerms($order));
+                $this->sendMessageRemember(order: $order);
+
+            }
 
         }
         $this->sendMessage(order: $order);
-        $this->sendMessageRemember(order: $order);
 
         return response()->json($order, 201);
     }
