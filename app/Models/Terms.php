@@ -11,6 +11,7 @@ class Terms extends Model
 
     protected $fillable = [
         'expire_date',
+        'days_to_expire',
     ];
 
      public function Order()

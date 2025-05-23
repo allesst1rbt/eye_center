@@ -7,6 +7,8 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ExpireDateTerms;
 use App\Services\MessageService;
+use DateTime;
+use Illuminate\Support\Carbon;
 
 class SendOrderExpireDateMail extends Command
 {
@@ -17,30 +19,22 @@ class SendOrderExpireDateMail extends Command
     {
        
 
-        // Get today's orders
-        $orders = Order::with('Term')->get();
+        $orders = Order::where('order_remember', '=','false')->with('Term')->get();
         foreach ($orders as $order) {
-            $dateToAdd =explode(' ',$order->Term->expire_date)[0];
-            $date = $order->created_at->diffInDays($order->created_at->copy()->addDays($dateToAdd));
-            //zap here
-            if ($dateToAdd === 5 && $date ===5 ) {
-                if ($order->customer_email) {
-                    Mail::send(view: new ExpireDateTerms($order));
-                }
-                $this->sendMessage($order);
-            }
-            if ($dateToAdd >30 && $dateToAdd <= 45 && $date ===10) {
+            $expire_date =(int)explode(' ',$order->Term->days_to_expire)[0];
+             
+            $date = $order->created_at->clone()->startOfDay()->diffInDays(Carbon::today(), false);
+           
+           
+            if ( $date === $expire_date ) {
                 if ($order->customer_email) {
                     Mail::send(view: new ExpireDateTerms($order));
                 }
                 $this->sendMessage($order);
 
-            }
-            if ($dateToAdd >45  && $date === 30) {
-                if ($order->customer_email) {
-                    Mail::send(view: new ExpireDateTerms($order));
-                }
-                $this->sendMessage($order);
+
+                $order->order_remember = "true";
+                $order->save();
             }
         }
 
@@ -54,7 +48,7 @@ class SendOrderExpireDateMail extends Command
         $messageService = new MessageService();
         $result = $messageService->sendText(
             $order->customer_number,
-            "Olá {$order->customer_name},\nÉ difícil acreditar, mas já faz {$order->Term->expire_date} desde que você adquiriu suas lentes e queremos saber se\ntem atendido suas necessidades. Você já pode adquirir reposição ou caso queira experimentar\noutro modelo, estamos a sua disposição. \nEstamos aqui para ajudar no que for necessário.\nEye Center."
+            "Olá {$order->customer_name},\nÉ difícil acreditar, mas já faz {$order->Term->days_to_expire} desde que você adquiriu suas lentes e queremos saber se\ntem atendido suas necessidades. Você já pode adquirir reposição ou caso queira experimentar\noutro modelo, estamos a sua disposição. \nEstamos aqui para ajudar no que for necessário.\nEye Center."
         );
 
         if ($result['success']) {

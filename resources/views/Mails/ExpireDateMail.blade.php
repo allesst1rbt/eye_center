@@ -34,7 +34,7 @@
     <p class="emoji">👁️</p>
     <p>Olá <strong>{{$order->customer_name}}</strong>, tudo bem?</p>
 
-    <p>Já se passaram <strong>{{$order->Term->expire_date}}</strong> desde que você adquiriu suas lentes conosco e gostaríamos de saber se elas têm atendido suas necessidades.</p>
+    <p>Já se passaram <strong>{{explode(' ', $order->Term->days_to_expire)[0]}} {{explode(' ', $order->Term->days_to_expire)[1]}}</strong> desde que você adquiriu suas lentes conosco e gostaríamos de saber se elas têm atendido suas necessidades.</p>
 
     <p>Se precisar de <strong>reposição</strong> ou quiser <strong>experimentar outro modelo</strong>, estamos à disposição para te ajudar! 😊</p>
 

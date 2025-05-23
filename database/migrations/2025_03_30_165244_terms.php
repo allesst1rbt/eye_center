@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('terms', function (Blueprint $table) {
             $table->id();
             $table->string(column: 'expire_date');
+            $table->string(column: 'days_to_expire');
             $table->timestamps();
         });
     }

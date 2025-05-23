@@ -29,17 +29,22 @@ class LensController extends Controller
         $lens = $worksheet->rangeToArray('A1:A300');
         array_shift( array: $lens );
         $lens = array_filter($lens, fn($value) => $value[0]!== null);
-        $terms = $worksheet->rangeToArray('B1:B20');
+        $terms = $worksheet->rangeToArray('B1:B30');
         array_shift( array: $terms );
         $terms = array_filter($terms, fn($value) => $value[0]!== null);
+        $daysToExpire = $worksheet->rangeToArray('C1:C30');
+        array_shift( array: $daysToExpire );
+        $daysToExpire = array_filter($daysToExpire, fn($value) => $value[0]!== null);
 
         foreach($lens as $len) {
             Lens::firstOrCreate(['name' => $len[0]]);
         };
 
-        foreach($terms as $term) {
-            Terms::firstOrCreate(['expire_date' => $term[0]]);
-        };
+        foreach ($terms as $key => $term) {
+            Terms::firstOrCreate(['expire_date' => $term[0], 'days_to_expire'=> $daysToExpire[$key][0]]);
+        }
+         return response()->json('', 201);
+
     }
 
     /**

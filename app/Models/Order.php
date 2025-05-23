@@ -11,6 +11,8 @@ class Order extends Model
         'customer_email',
         'customer_number',
         'customer_birthdate',
+        'order_remember',
+        'order_confirmation',
         'lens_id',
         'terms_id'
     ];

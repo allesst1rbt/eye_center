@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('customer_email')->nullable(true);
             $table->string('customer_number');
             $table->string('customer_birthdate');
+            $table->boolean('order_confirmation')->default('false');
+            $table->boolean('order_remember')->default('false');
+
 
             $table->foreignId(column: 'lens_id');
             $table->foreignId(column: 'terms_id');
