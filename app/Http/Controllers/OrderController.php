@@ -32,6 +32,8 @@ class OrderController extends Controller
             if ($order->Term->id === 1) {
                 Mail::to($order->customer_email)->send(new ExpireDateTerms($order));
                 $this->sendMessageRemember(order: $order);
+                $order->order_remember = "true";
+                $order->save();
                  
             }
 
