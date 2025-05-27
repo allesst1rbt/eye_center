@@ -1,5 +1,7 @@
+import { onlyNumbers } from "./formatPhoneNumber";
+
 export const formatDate = (value: string) => {
-  const cleaned = value.replace(/\D/g, "");
+  const cleaned = onlyNumbers(value);
 
   const limited = cleaned.slice(0, 8);
 
@@ -14,9 +16,9 @@ export const formatDate = (value: string) => {
 
 export const formatISODate = (isoDateString: string): string => {
   const date = new Date(isoDateString);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();
-  
+
   return `${day}/${month}/${year}`;
 };

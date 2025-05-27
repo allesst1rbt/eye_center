@@ -10,7 +10,7 @@ import { useLensStore } from "@/stores/lensStore";
 import { useOrderStore } from "@/stores/orderStore";
 import { Order } from "@/types";
 import { formatDate, formatISODate } from "@/utils/formatDate";
-import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
+import { formatPhoneNumber, onlyNumbers } from "@/utils/formatPhoneNumber";
 import "@css/Home.css";
 
 const INITIAL_ORDER_STATE: Omit<Order, "id"> = {
@@ -94,9 +94,9 @@ export default function Home() {
         return "Preencha todos os campos corretamente e assine o pedido!";
       }
 
-      const formattedPhone = formatPhoneNumber(order.customer_number);
-      if (!PHONE_REGEX.test(formattedPhone)) {
-        return "O número de telefone deve estar no formato (xx) xxxxx-xxxx.";
+      const phoneDigits = onlyNumbers(order.customer_number);
+      if (phoneDigits.length < 11) {
+        return "O número de telefone deve ter 11 dígitos (DDD + número).";
       }
 
       if (order.customer_email && !EMAIL_REGEX.test(order.customer_email)) {
@@ -109,12 +109,14 @@ export default function Home() {
   );
 
   const formatPhoneForApi = useCallback((phone: string): string => {
-    return `55${phone.replace(/\D/g, "")}`;
+    return `55${onlyNumbers(phone)}`;
   }, []);
 
   const handleOrderSubmit = useCallback(
     async (isEditing: boolean) => {
       if (isEditing && !editOrder) return;
+
+      console.log("new order customer number: ", newOrder.customer_number);
 
       const validationError = validateOrderForm(newOrder);
       if (validationError) {
