@@ -39,7 +39,7 @@
     "@hookform/resolvers": "^5.0.1",
     "@mui/icons-material": "^6.4.8",
     "@mui/material": "^6.4.7",
-    "@mui/x-data-grid": "^7.27.3",
+    "@mui/x-data-grid": "^7.29.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "date-fns": "^4.1.0",

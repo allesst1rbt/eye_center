@@ -48,9 +48,10 @@ export default function Home() {
   const handlePhoneChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
+      const numbersOnly = value.replace(/\D/g, "");
       setNewOrder((prevOrder) => ({
         ...prevOrder,
-        customer_number: formatPhoneNumber(value),
+        customer_number: formatPhoneNumber(numbersOnly),
       }));
     },
     []
@@ -66,8 +67,15 @@ export default function Home() {
     (id: number) => {
       const orderToEdit = orders.find((order) => order.id === id);
       if (orderToEdit) {
+        const formattedOrder = {
+          ...orderToEdit,
+          customer_number: orderToEdit.customer_number.startsWith("55")
+            ? formatPhoneNumber(orderToEdit.customer_number.slice(2))
+            : formatPhoneNumber(orderToEdit.customer_number),
+        };
+
         setEditOrder(orderToEdit);
-        setNewOrder({ ...orderToEdit });
+        setNewOrder(formattedOrder);
         setIsEdit(true);
         setAddModalOpen(true);
       }
@@ -104,76 +112,72 @@ export default function Home() {
     return `55${phone.replace(/\D/g, "")}`;
   }, []);
 
-  const handleAddOrder = useCallback(async () => {
-    const validationError = validateOrderForm(newOrder);
-    if (validationError) {
-      toast.error(validationError);
-      return;
-    }
+  const handleOrderSubmit = useCallback(
+    async (isEditing: boolean) => {
+      if (isEditing && !editOrder) return;
 
-    if (window.confirm("Deseja realmente adicionar essa compra?")) {
-      toast.promise(
-        async () => {
-          await createOrder({
-            ...newOrder,
-            customer_number: formatPhoneForApi(newOrder.customer_number),
-          });
-          await getOrders();
-          onCloseModal();
-        },
-        {
-          loading: "Adicionando...",
-          success: "Pedido adicionado com sucesso! :D",
-          error: "Erro ao adicionar pedido. :(",
-        }
-      );
-    }
-  }, [
-    newOrder,
-    createOrder,
-    getOrders,
-    validateOrderForm,
-    formatPhoneForApi,
-    onCloseModal,
-  ]);
+      const validationError = validateOrderForm(newOrder);
+      if (validationError) {
+        toast.error(validationError);
+        return;
+      }
 
-  const handleSaveEdit = useCallback(async () => {
-    if (!editOrder) return;
+      const confirmMessage = isEditing
+        ? "Deseja confirmar a edição da compra?"
+        : "Deseja realmente adicionar essa compra?";
 
-    const validationError = validateOrderForm(newOrder);
-    if (validationError) {
-      toast.error(validationError);
-      return;
-    }
+      if (window.confirm(confirmMessage)) {
+        const orderData = {
+          ...newOrder,
+          customer_number: formatPhoneForApi(newOrder.customer_number),
+        };
 
-    if (window.confirm("Deseja confirmar a edição da compra?")) {
-      toast.promise(
-        async () => {
-          await updateOrder(editOrder.id!, {
-            ...newOrder,
-            customer_number: formatPhoneForApi(newOrder.customer_number),
-          });
-          await getOrders();
-          setAddModalOpen(false);
-          setIsEdit(false);
-          setEditOrder(null);
-          setNewOrder(INITIAL_ORDER_STATE);
-        },
-        {
-          loading: "Atualizando pedido...",
-          success: "Pedido atualizado com sucesso! :D",
-          error: "Erro ao atualizar pedido. :(",
-        }
-      );
-    }
-  }, [
-    editOrder,
-    newOrder,
-    updateOrder,
-    getOrders,
-    validateOrderForm,
-    formatPhoneForApi,
-  ]);
+        toast.promise(
+          async () => {
+            if (isEditing && editOrder) {
+              await updateOrder(editOrder.id!, orderData);
+            } else {
+              await createOrder(orderData);
+            }
+            await getOrders();
+
+            if (isEditing) {
+              setEditOrder(null);
+            }
+            onCloseModal();
+          },
+          {
+            loading: isEditing ? "Atualizando pedido..." : "Adicionando...",
+            success: isEditing
+              ? "Pedido atualizado com sucesso! :D"
+              : "Pedido adicionado com sucesso! :D",
+            error: isEditing
+              ? "Erro ao atualizar pedido. :("
+              : "Erro ao adicionar pedido. :(",
+          }
+        );
+      }
+    },
+    [
+      editOrder,
+      newOrder,
+      createOrder,
+      updateOrder,
+      getOrders,
+      validateOrderForm,
+      formatPhoneForApi,
+      onCloseModal,
+    ]
+  );
+
+  const handleAddOrder = useCallback(
+    () => handleOrderSubmit(false),
+    [handleOrderSubmit]
+  );
+  const handleSaveEdit = useCallback(
+    () => handleOrderSubmit(true),
+    [handleOrderSubmit]
+  );
 
   const handleDelete = useCallback(
     (id: number) => {
@@ -295,7 +299,7 @@ export default function Home() {
 
         <Paper sx={paperStyle}>
           <DataGrid
-            rows={orders}
+            rows={orders.toReversed()}
             columns={columns}
             pageSizeOptions={[5, 10]}
             sx={{ border: 0 }}

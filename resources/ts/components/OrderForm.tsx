@@ -142,12 +142,9 @@ export default function OrderModal({
             <TextField
               fullWidth
               label="Telefone do Cliente (WhatsApp)"
+              type="tel"
               name="customer_number"
-              value={
-                !isEdit
-                  ? newOrder.customer_number
-                  : formatPhoneNumber(newOrder.customer_number.slice(2, 13))
-              }
+              value={newOrder.customer_number}
               onChange={handlePhoneChange}
               margin="dense"
               sx={styles.formField}
