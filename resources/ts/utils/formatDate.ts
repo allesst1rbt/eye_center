@@ -1,4 +1,4 @@
-import { onlyNumbers } from "./formatPhoneNumber";
+import { onlyNumbers } from "./formatUtils";
 
 export const formatDate = (value: string) => {
   const cleaned = onlyNumbers(value);

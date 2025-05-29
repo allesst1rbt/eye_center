@@ -10,7 +10,8 @@ import { useLensStore } from "@/stores/lensStore";
 import { useOrderStore } from "@/stores/orderStore";
 import { Order } from "@/types";
 import { formatDate, formatISODate } from "@/utils/formatDate";
-import { formatPhoneNumber, onlyNumbers } from "@/utils/formatPhoneNumber";
+import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
+import { onlyNumbers } from "@/utils/formatUtils";
 import "@css/Home.css";
 
 const INITIAL_ORDER_STATE: Omit<Order, "id"> = {
@@ -115,8 +116,6 @@ export default function Home() {
   const handleOrderSubmit = useCallback(
     async (isEditing: boolean) => {
       if (isEditing && !editOrder) return;
-
-      console.log("new order customer number: ", newOrder.customer_number);
 
       const validationError = validateOrderForm(newOrder);
       if (validationError) {

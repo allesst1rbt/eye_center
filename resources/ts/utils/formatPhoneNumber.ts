@@ -1,6 +1,4 @@
-export const onlyNumbers = (str: string): string => {
-  return str.replace(/\\D/g, "");
-};
+import { onlyNumbers } from "./formatUtils";
 
 export const formatPhoneNumber = (value: string) => {
   const cleaned = onlyNumbers(value);
