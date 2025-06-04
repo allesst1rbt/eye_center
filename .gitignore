@@ -6,6 +6,8 @@
 /storage/*.key
 /storage/pail
 /vendor
+package-lock.json
+yarn.lock
 .env
 .env.backup
 .env.production
