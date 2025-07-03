@@ -14,7 +14,8 @@ class Order extends Model
         'order_remember',
         'order_confirmation',
         'lens_id',
-        'terms_id'
+        'terms_id',
+        'employee_name'
     ];
 
     public function Lens()
