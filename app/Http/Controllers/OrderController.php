@@ -14,9 +14,9 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::paginate(15);
+        $orders = Order::paginate(perPage: $request->query('perPage',15), page: $request->query('page',1));
         return response()->json($orders);
     }
 
