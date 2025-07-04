@@ -19,11 +19,12 @@ const INITIAL_ORDER_STATE: Omit<Order, "id"> = {
   customer_email: "",
   customer_birthdate: "",
   customer_number: "",
+  order_confirmation: 0,
+  order_remember: 0,
   lens_id: null,
   terms_id: null,
 };
 
-const PHONE_REGEX = /^\(\d{2}\) \d{5}-\d{4}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export default function Home() {
@@ -33,9 +34,13 @@ export default function Home() {
   const [isModified, setIsModified] = useState<boolean>(false);
   const [newOrder, setNewOrder] =
     useState<Omit<Order, "id">>(INITIAL_ORDER_STATE);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 15,
+  });
 
   const { lens, terms, getLens } = useLensStore();
-  const { orders, getOrders, createOrder, updateOrder, deleteOrder } =
+  const { orders, pagination, loadingGetOrders, getOrders, createOrder, updateOrder, deleteOrder } =
     useOrderStore();
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,6 +94,7 @@ export default function Home() {
       if (
         !order.customer_name ||
         !order.customer_number ||
+        !order.customer_birthdate ||
         !order.lens_id ||
         !order.terms_id
       ) {
@@ -140,7 +146,7 @@ export default function Home() {
             } else {
               await createOrder(orderData);
             }
-            await getOrders();
+            await getOrders(paginationModel.page + 1, paginationModel.pageSize);
 
             if (isEditing) {
               setEditOrder(null);
@@ -168,6 +174,7 @@ export default function Home() {
       validateOrderForm,
       formatPhoneForApi,
       onCloseModal,
+      paginationModel,
     ]
   );
 
@@ -186,7 +193,7 @@ export default function Home() {
         toast.promise(
           async () => {
             await deleteOrder(id);
-            await getOrders();
+            await getOrders(paginationModel.page + 1, paginationModel.pageSize);
           },
           {
             loading: "Deletando pedido...",
@@ -196,7 +203,15 @@ export default function Home() {
         );
       }
     },
-    [deleteOrder, getOrders]
+    [deleteOrder, getOrders, paginationModel]
+  );
+
+  const handlePaginationChange = useCallback(
+    (newPaginationModel: { page: number; pageSize: number }) => {
+      setPaginationModel(newPaginationModel);
+      getOrders(newPaginationModel.page + 1, newPaginationModel.pageSize);
+    },
+    [getOrders]
   );
 
   const columns: GridColDef[] = useMemo(
@@ -269,14 +284,15 @@ export default function Home() {
       newOrder.customer_name !== editOrder.customer_name ||
         newOrder.customer_email !== editOrder.customer_email ||
         newOrder.customer_number !== editOrder.customer_number ||
+        newOrder.customer_birthdate !== editOrder.customer_birthdate ||
         newOrder.lens_id !== editOrder.lens_id ||
         newOrder.terms_id !== editOrder.terms_id
     );
   }, [newOrder, editOrder]);
 
   useEffect(() => {
-    getOrders();
-  }, [getOrders]);
+    getOrders(paginationModel.page + 1, paginationModel.pageSize);
+  }, [getOrders, paginationModel.page, paginationModel.pageSize]);
 
   useEffect(() => {
     getLens();
@@ -300,9 +316,14 @@ export default function Home() {
 
         <Paper sx={paperStyle}>
           <DataGrid
-            rows={orders.toReversed()}
+            rows={orders}
             columns={columns}
-            pageSizeOptions={[5, 10]}
+            paginationMode="server"
+            paginationModel={paginationModel}
+            onPaginationModelChange={handlePaginationChange}
+            pageSizeOptions={[5, 10, 15, 25, 50]}
+            rowCount={pagination?.total || 0}
+            loading={loadingGetOrders}
             sx={{ border: 0 }}
           />
         </Paper>

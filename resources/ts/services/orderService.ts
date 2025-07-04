@@ -1,8 +1,18 @@
-import { Order } from "@/types";
+import { Order, PaginatedOrderResponse } from "@/types";
 import api from "@/utils/api";
 
-export const getOrdersService = async (): Promise<Order[]> => {
-  const response = await api.get<Order[]>("/order");
+interface getOrdersParams {
+  page: number;
+  quant: number;
+}
+
+export const getOrdersService = async ({
+  page,
+  quant,
+}: getOrdersParams): Promise<PaginatedOrderResponse> => {
+  const response = await api.get<PaginatedOrderResponse>(
+    `/order?page=${page}&perPage=${quant}`
+  );
 
   return response.data;
 };

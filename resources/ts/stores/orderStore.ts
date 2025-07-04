@@ -9,16 +9,18 @@ import { create } from "zustand";
 
 export const useOrderStore = create<OrderStore>((set) => ({
   orders: [],
+  pagination: null,
   loadingGetOrders: false,
   loadingCreateOrder: false,
   loadingUpdateOrder: false,
   loadingDeleteOrder: false,
 
-  getOrders: async () => {
+  getOrders: async (page, quant) => {
     try {
       set({ loadingGetOrders: true });
-      const orders = await getOrdersService();
-      set({ orders });
+      const response = await getOrdersService({ page, quant });
+      const { data, ...pagination } = response;
+      set({ orders: data, pagination });
     } catch (error) {
       console.error("Erro ao buscar pedidos: ", error);
     } finally {
