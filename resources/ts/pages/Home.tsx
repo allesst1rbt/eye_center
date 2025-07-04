@@ -247,9 +247,15 @@ export default function Home() {
       {
         field: "created_at",
         headerName: "Data do Pedido",
-        width: 150,
+        width: 130,
         valueGetter: (_, row: Order) =>
           row.created_at && formatISODate(row.created_at),
+      },
+      {
+        field: "employee_name",
+        headerName: "Nome do(a) Vendedor(a)",
+        width: 200,
+        valueGetter: (_, row: Order) => row.employee_name || "N/A",
       },
       {
         field: "actions",
