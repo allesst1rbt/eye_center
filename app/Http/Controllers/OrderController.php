@@ -16,7 +16,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $orders = Order::paginate(perPage: $request->query('perPage',15), page: $request->query('page',1));
+        $orders = Order::orderBy('created_at', 'desc')->paginate(perPage: $request->query('perPage', 15), page: $request->query('page', 1));
         return response()->json($orders);
     }
 
