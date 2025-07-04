@@ -192,6 +192,16 @@ export default function OrderModal({
               )}
             />
 
+            <TextField
+              fullWidth
+              label="Nome do Vendedor"
+              name="employee_name"
+              value={newOrder.employee_name}
+              onChange={handleChange}
+              margin="dense"
+              sx={styles.formField}
+            />
+
             {isEdit && newOrder.created_at && (
               <TextField
                 fullWidth

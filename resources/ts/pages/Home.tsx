@@ -40,8 +40,15 @@ export default function Home() {
   });
 
   const { lens, terms, getLens } = useLensStore();
-  const { orders, pagination, loadingGetOrders, getOrders, createOrder, updateOrder, deleteOrder } =
-    useOrderStore();
+  const {
+    orders,
+    pagination,
+    loadingGetOrders,
+    getOrders,
+    createOrder,
+    updateOrder,
+    deleteOrder,
+  } = useOrderStore();
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
