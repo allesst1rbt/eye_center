@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'message_service' => [
+        'url' => env('MESSAGE_SERVICE_URL', 'http://0.0.0.0:8081'),
+        'api_key' => env('MESSAGE_SERVICE_API_KEY', 'mude-me'),
+        'instance' => env('MESSAGE_SERVICE_INSTANCE', 'Eye Center'),
+    ],
+
 ];

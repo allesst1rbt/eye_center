@@ -2,36 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\BirthdayWishMail;
-use Illuminate\Console\Command;
+use App\Jobs\SendBirthdayWishJob;
 use App\Models\Order;
-use Illuminate\Support\Facades\Mail;
-use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class SendBirthdayWishes extends Command
 {
     protected $signature = 'users:send-birthday-wishes';
     protected $description = 'Send birthday wishes to users';
 
-    public function handle()
+    public function handle(): void
     {
-        // Get users whose birthday is today
-        $Orders = Order::where('customer_bithdate', '=', Carbon::now()->format('d/m/Y'))->get();
+        $orders = Order::where('customer_bithdate', Carbon::now()->format('d/m/Y'))->get();
 
-        foreach ($Orders as $Order) {
-            try {
-                if ($Order->customer_email) {
-                    $this->sendBirthdayEmail($Order);
-                }
-                $this->info("Birthday wish sent to {$Order->customer_name}");
-            } catch (\Exception $e) {
-                $this->error("Failed to send birthday wish to {$Order->customer_name}: {$e->getMessage()}");
+        foreach ($orders as $order) {
+            if ($order->customer_email) {
+                SendBirthdayWishJob::dispatch($order);
+                $this->info("Birthday wish queued for {$order->customer_name}");
             }
         }
-    }
-
-    private function sendBirthdayEmail($Order)
-    {
-        Mail::send(new BirthdayWishMail($Order));
     }
 }
