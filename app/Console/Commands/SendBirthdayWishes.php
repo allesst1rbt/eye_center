@@ -14,7 +14,7 @@ class SendBirthdayWishes extends Command
 
     public function handle(): void
     {
-        $orders = Order::where('customer_bithdate', Carbon::now()->format('d/m/Y'))->get();
+        $orders = Order::where('customer_birthdate', Carbon::now()->format('d/m/Y'))->get();
 
         foreach ($orders as $order) {
             if ($order->customer_email) {

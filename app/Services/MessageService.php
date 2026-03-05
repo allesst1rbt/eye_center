@@ -19,7 +19,7 @@ class MessageService
 
     public function sendText(string $number, string $text): array
     {
-        return $this->post("message/sendText/{$this->instance}", [
+        return $this->post('message/sendText/' . rawurlencode($this->instance), [
             'number' => $number,
             'text' => $text,
         ]);
@@ -58,7 +58,7 @@ class MessageService
             $payload['fileName'] = $fileName;
         }
 
-        return $this->post("message/sendMedia/{$this->instance}", $payload);
+        return $this->post('message/sendMedia/' . rawurlencode($this->instance), $payload);
     }
 
     /**
@@ -69,7 +69,7 @@ class MessageService
      */
     public function sendAudio(string $number, string $audio): array
     {
-        return $this->post("message/sendWhatsAppAudio/{$this->instance}", [
+        return $this->post('message/sendWhatsAppAudio/' . rawurlencode($this->instance), [
             'number' => $number,
             'audio' => $audio,
         ]);
@@ -83,7 +83,7 @@ class MessageService
         try {
             $response = Http::withHeaders([
                 'apikey' => $this->apiKey,
-            ])->get("{$this->baseUrl}/instance/connectionState/{$this->instance}");
+            ])->get("{$this->baseUrl}/instance/connectionState/" . rawurlencode($this->instance));
 
             if ($response->successful()) {
                 return ['success' => true, 'data' => $response->json()];

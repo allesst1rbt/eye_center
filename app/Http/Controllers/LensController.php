@@ -2,83 +2,88 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreLensRequest;
+use App\Http\Requests\UpdateLensRequest;
 use App\Models\Lens;
 use App\Models\Terms;
 use Illuminate\Http\Request;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+
 class LensController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $lens = Lens::all();
-        return response()->json($lens);
+        return response()->json(Lens::all());
     }
-
 
     public function bulkCreate(Request $request)
     {
+        $request->validate([
+            'excel' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+        ]);
+
+        $spreadsheet = IOFactory::load($request->file('excel')->getPathname());
+        $worksheet   = $spreadsheet->getActiveSheet();
+
+        $lens = array_filter(
+            array_slice($worksheet->rangeToArray('A1:A300'), 1),
+            fn($row) => $row[0] !== null
+        );
+
+        $terms = array_filter(
+            array_slice($worksheet->rangeToArray('B1:B30'), 1),
+            fn($row) => $row[0] !== null
+        );
+
+        $daysToExpire = array_filter(
+            array_slice($worksheet->rangeToArray('C1:C30'), 1),
+            fn($row) => $row[0] !== null
+        );
+
+        // Sanitize cell values to prevent formula injection (=, +, -, @, |, %)
+        $sanitize = fn($value) => is_string($value)
+            ? ltrim(trim($value), '=+-@|%')
+            : $value;
+
         Lens::query()->delete();
         Terms::query()->delete();
 
-        $spreadsheet = IOFactory::load($request->excel->getPathName());
-        $worksheet = $spreadsheet->getActiveSheet();
-        $lens = $worksheet->rangeToArray('A1:A300');
-        array_shift( array: $lens );
-        $lens = array_filter($lens, fn($value) => $value[0]!== null);
-        $terms = $worksheet->rangeToArray('B1:B30');
-        array_shift( array: $terms );
-        $terms = array_filter($terms, fn($value) => $value[0]!== null);
-        $daysToExpire = $worksheet->rangeToArray('C1:C30');
-        array_shift( array: $daysToExpire );
-        $daysToExpire = array_filter($daysToExpire, fn($value) => $value[0]!== null);
-
-        foreach($lens as $len) {
-            Lens::firstOrCreate(['name' => $len[0]]);
-        };
-
-        foreach ($terms as $key => $term) {
-            Terms::firstOrCreate(['expire_date' => $term[0], 'days_to_expire'=> $daysToExpire[$key][0]]);
+        foreach ($lens as $row) {
+            Lens::create(['name' => $sanitize($row[0])]);
         }
-         return response()->json('', 201);
 
+        $daysToExpire = array_values($daysToExpire);
+        foreach (array_values($terms) as $index => $row) {
+            Terms::create([
+                'expire_date'    => $sanitize($row[0]),
+                'days_to_expire' => $sanitize($daysToExpire[$index][0] ?? ''),
+            ]);
+        }
+
+        return response()->json(null, 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreLensRequest $request)
     {
-        $lens = Lens::create($request->all());
-        return response()->json($lens);
+        return response()->json(Lens::create($request->validated()), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Lens $lens)
     {
         return response()->json($lens);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, lens $lens)
+    public function update(UpdateLensRequest $request, Lens $lens)
     {
-        $lens->update($request->all());
+        $lens->update($request->validated());
+
         return response()->json($lens);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Lens $lens)
     {
         $lens->delete();
+
         return response()->json(null, 204);
     }
 }

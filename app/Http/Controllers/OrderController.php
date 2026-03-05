@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
 use App\Services\OrderNotificationService;
 use Illuminate\Http\Request;
@@ -18,9 +20,9 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        $order = Order::create($request->all())->load('Term');
+        $order = Order::create($request->validated())->load('Term');
 
         if ($order->Term->expire_date === '2 dias') {
             $this->notificationService->notifyOrderExpiring($order);
@@ -36,9 +38,9 @@ class OrderController extends Controller
         return response()->json($order->load(['lens', 'terms']));
     }
 
-    public function update(Request $request, Order $order)
+    public function update(UpdateOrderRequest $request, Order $order)
     {
-        $order->update($request->all());
+        $order->update($request->validated());
 
         return response()->json($order);
     }

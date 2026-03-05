@@ -2,53 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTermsRequest;
+use App\Http\Requests\UpdateTermsRequest;
 use App\Models\Terms;
-use Illuminate\Http\Request;
 
 class TermsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $terms = Terms::all();
-        return response()->json($terms);
+        return response()->json(Terms::all());
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreTermsRequest $request)
     {
-        $terms = Terms::create($request->all());
-        return response()->json($terms);
+        return response()->json(Terms::create($request->validated()), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Terms $terms)
     {
         return response()->json($terms);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Terms $terms)
+    public function update(UpdateTermsRequest $request, Terms $terms)
     {
-        $terms->update($request->all());
+        $terms->update($request->validated());
+
         return response()->json($terms);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Terms $terms)
     {
         $terms->delete();
+
         return response()->json(null, 204);
     }
 }
