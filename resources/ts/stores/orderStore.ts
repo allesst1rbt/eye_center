@@ -34,6 +34,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
       await createOrderService(order);
     } catch (error) {
       console.error("Erro ao criar pedido: ", error);
+      throw error;
     } finally {
       set({ loadingCreateOrder: false });
     }
@@ -45,6 +46,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
       await updateOrderService(id, order);
     } catch (error) {
       console.error("Erro ao atualizar pedido: ", error);
+      throw error;
     } finally {
       set({ loadingUpdateOrder: false });
     }
@@ -56,6 +58,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
       await deleteOrderService(id);
     } catch (error) {
       console.error("Erro ao deletar pedido: ", error);
+      throw error;
     } finally {
       set({ loadingDeleteOrder: false });
     }

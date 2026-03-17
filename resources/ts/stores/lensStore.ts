@@ -30,6 +30,7 @@ export const useLensStore = create<LensStore>((set) => ({
       set({ lens, terms });
     } catch (error) {
       console.error("Erro ao buscar lentes:", error);
+      throw error;
     } finally {
       set({ loadingGetLens: false });
     }
@@ -41,7 +42,7 @@ export const useLensStore = create<LensStore>((set) => ({
       await updateLensService(formData);
     } catch (error) {
       console.error("Erro ao enviar arquivo:", error);
-      alert("Erro ao enviar o arquivo.");
+      throw error;
     } finally {
       set({ loadingUpdateLens: false });
     }

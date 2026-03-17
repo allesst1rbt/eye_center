@@ -46,14 +46,17 @@ api.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.error("Não autorizado! Redirecionando para login...");
       localStorage.removeItem("token");
-
       if (redirectToLogin) {
         redirectToLogin();
       }
     }
-    return Promise.reject(error);
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro inesperado.";
+    return Promise.reject(new Error(message));
   }
 );
 
