@@ -36,9 +36,8 @@ return [
     ],
 
     'message_service' => [
-        'url' => env('MESSAGE_SERVICE_URL', 'http://0.0.0.0:8081'),
+        'url' => env('MESSAGE_SERVICE_URL', 'https://wasenderapi.com/api/send-message'),
         'api_key' => env('MESSAGE_SERVICE_API_KEY'),
-        'instance' => env('MESSAGE_SERVICE_INSTANCE', 'Eye Center'),
     ],
 
 ];
