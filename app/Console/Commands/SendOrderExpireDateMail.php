@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Services\OrderNotificationService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SendOrderExpireDateMail extends Command
 {
@@ -19,7 +20,10 @@ class SendOrderExpireDateMail extends Command
 
     public function handle(): void
     {
+        Log::info('orders:send-daily-email started');
+
         $orders = Order::where('order_remember', false)->with('Term')->get();
+        $notified = 0;
 
         foreach ($orders as $order) {
             $daysElapsed = $order->created_at->clone()->startOfDay()->diffInDays(Carbon::today(), false);
@@ -28,9 +32,12 @@ class SendOrderExpireDateMail extends Command
             if ($daysElapsed === $expireDays) {
                 $this->notificationService->notifyOrderExpiring($order);
                 $this->info("Expiry notification queued for {$order->customer_name}");
+                Log::info("Expiry notification queued for {$order->customer_name}");
+                $notified++;
             }
         }
 
         $this->info('Daily expiry check completed.');
+        Log::info('orders:send-daily-email finished', ['notified' => $notified, 'total_checked' => $orders->count()]);
     }
 }
