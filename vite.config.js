@@ -13,9 +13,7 @@ export default defineConfig({
     react(),
   ],
   build: {
-    manifest: {
-      path: "public", // This will put manifest.json directly in public folder
-    },
+    manifest: 'manifest.json',
     outDir: "public/build",
     rollupOptions: {
       output: {
