@@ -35,7 +35,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        return response()->json($order->load(['lens', 'terms']));
+        return response()->json($order->load(['Lens', 'Term']));
     }
 
     public function update(UpdateOrderRequest $request, Order $order)

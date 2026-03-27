@@ -26,7 +26,7 @@ class SendOrderExpireDateMail extends Command
         $notified = 0;
 
         foreach ($orders as $order) {
-            $daysElapsed = $order->created_at->clone()->startOfDay()->diffInDays(Carbon::today(), false);
+            $daysElapsed = (int) $order->created_at->clone()->startOfDay()->diffInDays(Carbon::today(), false);
             $expireDays = (int) explode(' ', $order->Term->days_to_expire)[0];
 
             if ($daysElapsed === $expireDays) {
