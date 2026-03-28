@@ -21,7 +21,7 @@ class BirthdayWishMail extends Mailable
     {
         return $this->view('Mails.BirthdayMail')
             ->subject('Happy Birthday! 🎉')
-            ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
+            ->from(env('MAIL_FROM_ADDRESS'), 'EyeCenter')
             ->to($this->order->customer_email);
     }
 

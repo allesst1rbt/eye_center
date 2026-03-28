@@ -24,7 +24,7 @@ class OrderCreatedMail extends Mailable
         return $this->view('Mails.OrderCreatedMail')
             ->subject('Eye Center agradece a sua preferência! Veja como aproveitar ao máximo a sua
 adaptação de lentes')
-            ->from(env('MAIL_FROM_ADDRESS'))
+            ->from(env('MAIL_FROM_ADDRESS'), 'EyeCenter')
             ->to($this->order->customer_email);
     }
 }

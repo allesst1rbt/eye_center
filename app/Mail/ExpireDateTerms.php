@@ -23,7 +23,7 @@ class ExpireDateTerms extends Mailable
     {
         return $this->view('Mails.ExpireDateMail')
             ->subject('Hora de renovar suas lentes!')
-            ->from(env('MAIL_FROM_ADDRESS'))
+            ->from(env('MAIL_FROM_ADDRESS'), 'EyeCenter')
             ->to($this->order->customer_email);
     }
 }
