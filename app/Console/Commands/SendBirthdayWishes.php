@@ -17,7 +17,8 @@ class SendBirthdayWishes extends Command
     {
         Log::info('users:send-birthday-wishes started');
 
-        $orders = Order::where('customer_birthdate', Carbon::now()->format('d/m/Y'))->get();
+        $today = Carbon::now()->format('d/m');
+        $orders = Order::where('customer_birthdate', 'like', $today . '/%')->get();
 
         foreach ($orders as $order) {
             if ($order->customer_email) {
