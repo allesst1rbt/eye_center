@@ -21,7 +21,7 @@ class SendOrderConfirmationMail extends Command
     {
         Log::info('orders:send-confirmation started');
 
-        $orders = Order::where('order_confirmation', false)->get();
+        $orders = Order::where('order_confirmation', 0)->get();
         $notified = 0;
 
         foreach ($orders as $order) {
