@@ -23,10 +23,9 @@ class SendOrderConfirmationMail extends Command
         Log::info('orders:send-confirmation started');
 
         $lastMonthStart = Carbon::now()->subYear()->startOfMonth();
-        $lastMonthEnd   = Carbon::now()->subMonth()->endOfMonth();
+        $lastMonthEnd   = Carbon::now()->subMonth(2)->endOfMonth();
 
-        $orders = Order::where('order_confirmation', 1)
-            ->where(function ($query) use ($lastMonthStart, $lastMonthEnd) {
+        $orders = Order::where(function ($query) use ($lastMonthStart, $lastMonthEnd) {
                 $query->whereNull('created_at')
                       ->orWhereNotBetween('created_at', [$lastMonthStart, $lastMonthEnd]);
             })
