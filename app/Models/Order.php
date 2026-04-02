@@ -16,7 +16,6 @@ class Order extends Model
         'customer_birthdate',
         'order_remember',
         'order_confirmation',
-        'order_delivery',
         'lens_id',
         'terms_id',
         'employee_name'

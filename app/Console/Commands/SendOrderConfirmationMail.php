@@ -32,8 +32,8 @@ class SendOrderConfirmationMail extends Command
             ->get();
         $notified = 0;
 
-        foreach ($orders as $order) {
-            $this->notificationService->notifyOrderCreated($order);
+        foreach ($orders as $index => $order) {
+            $this->notificationService->notifyOrderCreated($order, $index * 30);
             $this->info("Confirmation queued for {$order->customer_name}");
             Log::info("Confirmation queued for {$order->customer_name}");
             $notified++;
