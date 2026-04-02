@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Order;
 use App\Services\OrderNotificationService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -21,7 +22,15 @@ class SendOrderConfirmationMail extends Command
     {
         Log::info('orders:send-confirmation started');
 
-        $orders = Order::where('order_confirmation', 0)->get();
+        $lastMonthStart = Carbon::now()->subYear()->startOfMonth();
+        $lastMonthEnd   = Carbon::now()->subMonth()->endOfMonth();
+
+        $orders = Order::where('order_confirmation', 1)
+            ->where(function ($query) use ($lastMonthStart, $lastMonthEnd) {
+                $query->whereNull('created_at')
+                      ->orWhereNotBetween('created_at', [$lastMonthStart, $lastMonthEnd]);
+            })
+            ->get();
         $notified = 0;
 
         foreach ($orders as $order) {
