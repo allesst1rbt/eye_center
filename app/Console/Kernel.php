@@ -18,5 +18,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('users:send-birthday-wishes')
                  ->dailyAt('09:00')
                  ->onFailure(fn() => Log::error('users:send-birthday-wishes failed'));
+
+        $schedule->command('orders:send-delivery')
+                 ->dailyAt('10:00')
+                 ->onFailure(fn() => Log::error('orders:send-delivery failed'));
     }
 }
