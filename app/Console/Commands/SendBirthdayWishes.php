@@ -21,11 +21,11 @@ class SendBirthdayWishes extends Command
         $orders = Order::where('customer_birthdate', 'like', $today . '/%')->get();
 
         foreach ($orders as $order) {
-            if ($order->customer_email) {
-                SendBirthdayWishJob::dispatch($order);
-                $this->info("Birthday wish queued for {$order->customer_name}");
-                Log::info("Birthday wish queued for {$order->customer_name}");
-            }
+          
+            SendBirthdayWishJob::dispatch($order);
+            $this->info("Birthday wish queued for {$order->customer_name}");
+            Log::info("Birthday wish queued for {$order->customer_name}");
+            
         }
 
         Log::info('users:send-birthday-wishes finished', ['total' => $orders->count()]);
