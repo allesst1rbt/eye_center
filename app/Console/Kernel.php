@@ -11,12 +11,19 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('orders:send-daily-email')
-                 ->daily()
-                 ->at('23:00')
-                 ->onFailure(fn() => Log::error('orders:send-daily-email failed'));
+             ->dailyAt('23:00')
+             ->timezone('America/Manaus')
+             ->withoutOverlapping()
+             ->onFailure(function (Stringable $output) {
+                 Log::error('orders:send-daily-email failed', ['output' => (string) $output]);
+             });
 
         $schedule->command('users:send-birthday-wishes')
-                 ->dailyAt('09:00')
-                 ->onFailure(fn() => Log::error('users:send-birthday-wishes failed'));
+                ->dailyAt('09:00')
+                ->timezone('America/Manaus')
+                ->withoutOverlapping()
+                ->onFailure(function (Stringable $output) {
+                    Log::error('users:send-birthday-wishes failed', ['output' => (string) $output]);
+                });
     }
 }
