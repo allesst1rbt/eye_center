@@ -22,7 +22,7 @@ class SendBirthdayWishes extends Command
 
         foreach ($orders as $order) {
           
-            SendBirthdayWishJob::dispatch($order);
+            SendBirthdayWishJob::dispatch($order)->delay(now()->addSeconds(30));
             $this->info("Birthday wish queued for {$order->customer_name}");
             Log::info("Birthday wish queued for {$order->customer_name}");
             
